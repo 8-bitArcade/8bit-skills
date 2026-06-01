@@ -33,6 +33,21 @@ if [ -f "$MANIFEST" ]; then
   done < "$MANIFEST"
 fi
 
+# ── 1b. Load denied skills (never sync these) ──
+declare -A DENIED
+DENIED_LIST=$(python3 -c "
+import json
+from pathlib import Path
+denied_file = Path('$REPO_DIR/.denied-skills.json')
+if denied_file.exists():
+    data = json.load(open(denied_file))
+    for name in data.get('denied', []):
+        print(name)
+" 2>/dev/null || true)
+while IFS= read -r name; do
+  [ -n "$name" ] && DENIED["$name"]=1
+done <<< "$DENIED_LIST"
+
 # ── 2. Copy skills to staging ──
 rm -rf "$STAGING"
 mkdir -p "$STAGING"
@@ -50,6 +65,10 @@ for item in "$SKILLS_SRC"/*/; do
       SKIPPED=$((SKIPPED + 1))
       continue
     fi
+    if [ "${DENIED[$name]+isset}" ]; then
+      SKIPPED=$((SKIPPED + 1))
+      continue
+    fi
     rsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \
       "$item/" "$STAGING/$name/"
     COPIED=$((COPIED + 1))
@@ -61,9 +80,13 @@ for item in "$SKILLS_SRC"/*/; do
       [ -f "$skill_item/SKILL.md" ] || continue
 
       if [ "${BUNDLED[$skill_name]+isset}" ]; then
-        SKIPPED=$((SKIPPED + 1))
-        continue
-      fi
+      SKIPPED=$((SKIPPED + 1))
+      continue
+    fi
+    if [ "${DENIED[$skill_name]+isset}" ]; then
+      SKIPPED=$((SKIPPED + 1))
+      continue
+    fi
 
       mkdir -p "$STAGING/$name/$skill_name"
       rsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \

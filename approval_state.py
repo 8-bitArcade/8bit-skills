@@ -14,6 +14,7 @@ Usage:
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -182,8 +183,34 @@ def create_confirmation_keyboard(skill_name):
         ]
     }
 
+def remove_denied_skills():
+    """Remove denied skills from the skills/ directory before pushing."""
+    denied = get_denied_skills()
+    skills_dir = REPO_DIR / "skills"
+    removed = []
+    
+    for skill_name in denied:
+        # Check flat skill
+        flat_path = skills_dir / skill_name
+        if flat_path.is_dir():
+            shutil.rmtree(flat_path)
+            removed.append(skill_name)
+            continue
+        # Check inside categories
+        for category_dir in skills_dir.iterdir():
+            if not category_dir.is_dir():
+                continue
+            cat_skill = category_dir / skill_name
+            if cat_skill.is_dir():
+                shutil.rmtree(cat_skill)
+                removed.append(f"{category_dir.name}/{skill_name}")
+    
+    if removed:
+        print(f"Removed denied skills: {', '.join(removed)}")
+    return removed
+
 def push_to_public():
-    """Push confirmed skills to public repo."""
+    """Push confirmed skills to public repo, excluding denied skills."""
     state = load_json(STATE_FILE, {})
     confirmed = [item for item in state.get("pending", []) if item.get("confirmed")]
     
@@ -192,6 +219,9 @@ def push_to_public():
         return False
     
     print(f"Pushing {len(confirmed)} confirmed skills to public repo...")
+    
+    # Remove denied skills from working tree BEFORE pushing
+    remove_denied_skills()
     
     # Add remote if not exists
     try:
@@ -213,30 +243,38 @@ def push_to_public():
     )
     
     # Merge if needed
-    subprocess.run(
+    merge_result = subprocess.run(
         ["git", "merge", f"{PUBLIC_REMOTE}/main", "--allow-unrelated-histories", "--no-edit"],
         cwd=REPO_DIR,
         capture_output=True,
+        text=True,
         timeout=15
     )
     
-    # Resolve conflicts by keeping our version
-    subprocess.run(
-        ["git", "checkout", "--ours", "."],
-        cwd=REPO_DIR,
-        capture_output=True,
-        timeout=10
-    )
+    if merge_result.returncode != 0:
+        # Resolve conflicts by keeping our version
+        subprocess.run(
+            ["git", "checkout", "--ours", "."],
+            cwd=REPO_DIR,
+            capture_output=True,
+            timeout=10
+        )
+    
+    # Re-remove denied skills after merge (they might have been restored by conflict resolution)
+    remove_denied_skills()
+    
     subprocess.run(
         ["git", "add", "."],
         cwd=REPO_DIR,
         capture_output=True,
         timeout=10
     )
-    subprocess.run(
-        ["git", "commit", "-m", "Merge with public repo - resolve conflicts"],
+    
+    commit_result = subprocess.run(
+        ["git", "commit", "-m", "Filter denied skills before public push"],
         cwd=REPO_DIR,
         capture_output=True,
+        text=True,
         timeout=10
     )
     
