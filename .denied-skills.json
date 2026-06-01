@@ -8,11 +8,7 @@
     "pitch-deck-creation",
     "provider-setup-and-fallback",
     "secure-auth-backend",
-    {
-      "name": "social-media-publishing",
-      "reason": "Needs further work",
-      "denied_at": "2026-06-01T14:25:10.437641"
-    }
+    "social-media-publishing"
   ],
   "denied_at": null
 }

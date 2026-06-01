@@ -11,7 +11,6 @@ Works on: local machine, VPS, cloud VM, or hybrid multi-device.
 
 - **audio-to-obsidian** — Transcribe audio files to Obsidian notes with summary, transcript, and action items
 - **automated-reporting** — Generate automated reports, briefings, and status updates. Covers daily briefs, cron job reports, and scheduled summaries.
-- **content-publishing/social-media-publishing** — Platform-specific API setup, credential management, and posting workflows for automated content distribution across Instagram, Facebook, X/Twitter, YouTube, and TikTok.
 - **devops/agent-efficiency-audit** — Audit and review the efficiency of the Hermes agent setup — cron jobs, skills, model selection, context usage, and workflows. Run ad-hoc or via cron.
 - **devops/hermes-context-optimization** — Diagnose and reduce Hermes agent context window pressure — config tuning, memory pruning, skill management.
 - **devops/hermes-cron-infrastructure** — Maintain, debug, and create Hermes cron jobs and their supporting scripts — including SSHFS timeout handling and health monitoring.
@@ -76,4 +75,4 @@ To contribute: fork this repo, add your skill, and open a PR.
 
 ---
 
-*Auto-synced and sanitized from production. Last updated: 2026-06-01 12:17 UTC*
+*Auto-synced and sanitized from production. Last updated: 2026-06-01 12:31 UTC*
