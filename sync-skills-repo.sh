@@ -178,34 +178,49 @@ with open(path, "w") as f:
     f.write(readme)
 PYEOF
 
-# ── 5. Git commit & push to personal staging repo ──
+# ── 5. Git commit locally (NO auto-push — waits for human approval) ──
 cd "$REPO_DIR"
 git add -A
 
 if git diff --cached --quiet; then
-  echo "No changes to sync."
+  # Output empty JSON so cron knows there's nothing to review
+  echo '{"status": "no_changes"}'
   exit 0
 fi
 
 git commit -m "Sync & sanitize — ${TIMESTAMP} (${COPIED} skills)"
-git push origin main 2>&1
-echo "Pushed to personal repo: ${COPIED} skills, ${SKIPPED} bundled skipped."
 
-# ── 6. Mirror to org public repo (if target set & permission available) ──
+# ── 6. Generate diff summary for human review ──
+DIFF_SUMMARY=$(git diff --stat HEAD~1 HEAD 2>/dev/null || echo "first commit")
+CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | head -20)
+
+echo "── SKILLS SYNC REVIEW ──"
+echo "Skills: ${COPIED} synced, ${SKIPPED} bundled skipped"
+echo ""
+echo "Changed files:"
+echo "$CHANGED_FILES"
+echo ""
+echo "Diff stats:"
+echo "$DIFF_SUMMARY"
+echo ""
+echo "To approve and push, reply: push 8bit skills"
+echo "To discard, reply: discard 8bit skills"
+echo ""
+echo "ORG_TARGET is NOT set — no automatic mirror to 8Bit-Arcade org."
+
+# ── 7. Mirror to org public repo (only if ORG_TARGET is explicitly set) ──
+# This requires: gh CLI with org write permission, AND human approval first
 if [ -n "$ORG_TARGET" ]; then
-  echo "Attempting mirror to org: ${ORG_TARGET}..."
-  # Mirror via git remote + push
-  ORG_URL="https://github.com/${ORG_TARGET}.git"
-  git remote remove org-mirror 2>/dev/null || true
-  git remote add org-mirror "$ORG_URL" 2>/dev/null || true
-
-  if git push org-mirror main 2>&1; then
-    echo "Mirrored to ${ORG_TARGET} ✓"
-    git remote remove org-mirror 2>/dev/null || true
-  else
-    echo "WARNING: Could not push to org (need org write permission)."
-    echo "  Manual step: fork https://github.com/Russell-Bryant/8Bit-Skills-Library"
-    echo "  to ${ORG_TARGET} via GitHub web UI."
-    git remote remove org-mirror 2>/dev/null || true
-  fi
+  echo "ORG_TARGET=${ORG_TARGET} but auto-mirror is DISABLED pending manual review."
 fi
+
+# ── 8. Mark pending approval (atomic flag file for cron pickup) ──
+PENDING_FILE="$REPO_DIR/.pending-push"
+cat > "$PENDING_FILE" << EOF
+COMMIT=$(git rev-parse HEAD)
+TIMESTAMP=${TIMESTAMP}
+SKILLS=${COPIED}
+FILES_CHANGED=$(echo "$CHANGED_FILES" | wc -l)
+EOF
+echo ""
+echo "Pending push flag written: $PENDING_FILE"
