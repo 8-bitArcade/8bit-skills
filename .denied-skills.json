@@ -7,7 +7,12 @@
     "founder-journal-system",
     "pitch-deck-creation",
     "provider-setup-and-fallback",
-    "secure-auth-backend"
+    "secure-auth-backend",
+    {
+      "name": "social-media-publishing",
+      "reason": "Needs further work",
+      "denied_at": "2026-06-01T14:25:10.437641"
+    }
   ],
   "denied_at": null
 }
