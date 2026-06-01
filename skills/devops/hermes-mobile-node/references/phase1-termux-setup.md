@@ -51,13 +51,13 @@ ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
 cat ~/.ssh/id_ed25519.pub
 ```
 
-Add the public key to VPS `~/.ssh/authorized_keys` for secure model file transfer.
+Add the public key to {{AGENT_HOST}} `~/.ssh/authorized_keys` for secure model file transfer.
 
 ### 6. {{MESH_VPN}}
 
 Install the {{MESH_VPN}} Android app from Play Store or F-Droid. Log in to {{USER}}'s tailnet.
 
-Verify from VPS: `{{MESH_VPN_CMD}} status --json` should show the phone by hostname.
+Verify from {{AGENT_HOST}}: `{{MESH_VPN_CMD}} status --json` should show the phone by hostname.
 
 ### 7. Model Storage
 

@@ -145,6 +145,18 @@ RULES = [
     (r'\bwindows machine\b', '{{DESKTOP_HOST}}'),
     (r'\bmount point on VPS\b', '{{VAULT_MOUNT}}'),
     (r'\bWindows username\b', '{{DESKTOP_USER}}'),
+
+    # VPS / infrastructure terms in prose
+    (r'\bagent runs on VPS\b', 'agent runs on {{AGENT_HOST}}'),
+    (r'\bAgent on VPS\b', 'Agent on {{AGENT_HOST}}'),
+    (r'\bagent host\b', 'agent host ({{AGENT_HOST}})'),
+    (r'\bAgent host\b', 'agent host ({{AGENT_HOST}})'),
+    (r'\bVPS \(agent host\)\b', '{{AGENT_HOST}}'),
+    (r'\bOn VPS\b', 'On {{AGENT_HOST}}'),
+    (r'\bon VPS\b', 'on {{AGENT_HOST}}'),
+    (r'\bto VPS\b', 'to {{AGENT_HOST}}'),
+    (r'\bfrom VPS\b', 'from {{AGENT_HOST}}'),
+    (r'\bthe VPS\b', '{{AGENT_HOST}}'),
 ]
 
 

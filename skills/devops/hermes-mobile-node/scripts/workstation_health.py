@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """workstation_health.py — Health endpoint for the mobile AI continuity node.
 
-Runs on the VPS. Polls the workstation ({{LMS}} @ {{LMS_HOST}})
+Runs on {{AGENT_HOST}}. Polls the workstation ({{LMS}} @ {{LMS_HOST}})
 and reports availability. Two endpoints:
   /health — full diagnostics
   /mobile — minimal decision for phone (run_local: true/false)

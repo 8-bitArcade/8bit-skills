@@ -22,7 +22,7 @@
 
 ### 5. GPU transcription fails, falls back to CPU
 **Cause**: Windows machine offline or SSH unreachable.
-**Fix**: Script auto-falls back to `tiny` model on VPS CPU. If you need quality, wait for Windows machine to come back online.
+**Fix**: Script auto-falls back to `tiny` model on {{AGENT_HOST}} CPU. If you need quality, wait for Windows machine to come back online.
 
 ## SSH Command Pattern (Working)
 ```bash

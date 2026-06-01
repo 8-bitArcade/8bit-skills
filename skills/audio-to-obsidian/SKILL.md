@@ -26,7 +26,7 @@ Transcribe audio files and create formatted Obsidian notes.
 source ~/.hermes/venv/bin/activate
 python3 ~/.hermes/skills/audio-to-obsidian/scripts/transcribe-single.py <audio_file_path>
 ```
-Automatically uses `{{WHISPER_MODEL}}` on Windows {{GPU_MODEL}} GPU for best quality. Falls back to `tiny` on VPS CPU if GPU unavailable. First run downloads model (~1.5GB) to Windows machine.
+Automatically uses `{{WHISPER_MODEL}}` on Windows {{GPU_MODEL}} GPU for best quality. Falls back to `tiny` on {{AGENT_HOST}} CPU if GPU unavailable. First run downloads model (~1.5GB) to Windows machine.
 
 ### Batch transcription (all files)
 ```bash
@@ -54,7 +54,7 @@ Uses `{{MODEL_LARGE}}` on {{LMS}}. Creates `.backup.md` of each original before 
 ## Model Selection
 - `{{WHISPER_MODEL}}` (~1.5GB): GPU transcription on Windows {{GPU_MODEL}}. Best quality. Default for `transcribe-gpu.py`.
 - `medium` (~5GB): Too large for VPS (7.8GB RAM) — causes OOM kills.
-- `small` (~2.5GB): Also OOM-kills on VPS. Do not use.
+- `small` (~2.5GB): Also OOM-kills on {{AGENT_HOST}}. Do not use.
 - `tiny` (~1GB): VPS fallback only. Lowest accuracy.
 
 **Always pass `--language en`** to reduce hallucination on tech terms, names, and non-English-sounding words. Omitting this causes Whisper to guess language and introduces errors.
@@ -97,11 +97,11 @@ with open(os.path.expanduser('~/.hermes/cron_state/last_transcribed_files.json')
 **Timeout guard**: The script includes a 60s timeout on `os.listdir()` because `~/urecorder/` is on SSHFS which can hang. Without this, the cron job hits the 120s platform limit and fails.
 
 ## Pitfalls
-- **{{LMS}} Whisper API does NOT work**: {{LMS}} loads `whisper-large-v3` but does NOT expose `/v1/audio/transcriptions` endpoint. Do NOT attempt to use {{LMS}}'s Whisper via HTTP API — it will fail with "Unsupported Media Type". Use local `openai-whisper` on VPS or GPU transcription instead.
+- **{{LMS}} Whisper API does NOT work**: {{LMS}} loads `whisper-large-v3` but does NOT expose `/v1/audio/transcriptions` endpoint. Do NOT attempt to use {{LMS}}'s Whisper via HTTP API — it will fail with "Unsupported Media Type". Use local `openai-whisper` on {{AGENT_HOST}} or GPU transcription instead.
 - **VPS RAM limits**: The VPS has 7.8GB RAM. Models larger than `tiny` (small, medium) cause OOM kills. Do NOT attempt them — the process will be killed silently with exit code -1 and no output.
 - **`--compute_type` is NOT a valid CLI flag**: This is a Python API parameter only. The Whisper CLI does not accept it.
 - **`--fp16 False` increases memory usage**: Disabling fp16 uses float32 which doubles memory. Keep default (`True`) on CPU.
-- **GPU transcription requires SSH access to Windows**: If the Windows machine is off or unreachable, fall back to VPS `tiny` model.
+- **GPU transcription requires SSH access to Windows**: If the Windows machine is off or unreachable, fall back to {{AGENT_HOST}} `tiny` model.
 - **Windows SSH path handling**: PowerShell via SSH ACCEPTS forward slashes (`{{WINDOWS_TEMP}}/whisper_work`) — do NOT use backslashes in SSH commands, they cause "filename, directory name, or volume label syntax is incorrect" errors. Backslashes get mangled by the SSH shell layer.
 - **Direct Whisper CLI fails on Windows via SSH**: `whisper <file> ...` invoked via SSH subprocess throws `FileNotFoundError`. Workaround: ship a Python helper script (`run_whisper.py`) that calls `whisper.load_model()` + `model.transcribe()` directly, avoiding CLI path parsing issues.
 - **Missing ffmpeg on Windows = silent crash**: If ffmpeg isn't installed or isn't in PATH, Whisper's `transcribe()` throws `FileNotFoundError: [WinError 2]` — looks like a file issue but it's actually ffmpeg. Verify with `where ffmpeg` on Windows. Install via `winget install --id Gyan.FFmpeg --accept-source-agreements --accept-package-agreements`. After install, restart the SSH session so PATH updates take effect.

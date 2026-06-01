@@ -25,14 +25,14 @@ This skill handles all interactions with Obsidian vaults when no native plugin e
 
 ## Core Workflows
 
-### 1. SSHFS Mount (Primary — Vault on {{DESKTOP_HOST}}, Agent on VPS)
-**When**: Vault lives on user's {{DESKTOP_HOST}} (`{{INFERENCE_HOST_IP}}`), agent runs on VPS. This is the recommended approach for cross-machine vault access.
+### 1. SSHFS Mount (Primary — Vault on {{DESKTOP_HOST}}, Agent on {{AGENT_HOST}})
+**When**: Vault lives on user's {{DESKTOP_HOST}} (`{{INFERENCE_HOST_IP}}`), agent runs on {{AGENT_HOST}}. This is the recommended approach for cross-machine vault access.
 
 **Prerequisites**:
 - SSH server running on {{DESKTOP_HOST}} (Settings → Optional Features → OpenSSH Server)
 - VPS public key added to Windows `authorized_keys`
-- `/etc/fuse.conf` on VPS has `user_allow_other` uncommented
-- `{{REMOTE_MOUNT_TOOL}}` installed on VPS (`apt install {{REMOTE_MOUNT_TOOL}}`)
+- `/etc/fuse.conf` on {{AGENT_HOST}} has `user_allow_other` uncommented
+- `{{REMOTE_MOUNT_TOOL}}` installed on {{AGENT_HOST}} (`apt install {{REMOTE_MOUNT_TOOL}}`)
 
 **Steps**:
 ```bash
@@ -41,7 +41,7 @@ $key = "ssh-ed25519 AAAA... (VPS pub key)"
 Set-Content -Path "$env:USERPROFILE\.ssh\authorized_keys" -Value $key -Force
 icacls "$env:USERPROFILE\.ssh\authorized_keys" /grant "USERNAME:(R,W)"
 
-# 2. Mount vault on VPS
+# 2. Mount vault on {{AGENT_HOST}}
 mkdir -p ~/.obsidian_vault
 {{REMOTE_MOUNT_TOOL}} {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"{{WINDOWS_USER_DOCS}}/AI_Vault/Admin" ~/.obsidian_vault -o allow_other,reconnect,_netdev
 
@@ -55,11 +55,11 @@ ls -la ~/.obsidian_vault/
 - ⚠️ Windows `authorized_keys` permissions: file created as admin but user can't read → must run `icacls` fix in admin PowerShell.
 - ⚠️ `/etc/fuse.conf` must have `user_allow_other` uncommented, or `{{REMOTE_MOUNT_TOOL}} -o allow_other` fails.
 - ⚠️ SSHFS path format: use forward slashes (`C:/Users/...`) and quote the path.
-- ⚠️ No sudo on VPS → cannot add to `/etc/fstab`. Use mount script instead.
+- ⚠️ No sudo on {{AGENT_HOST}} → cannot add to `/etc/fstab`. Use mount script instead.
 - ⚠️ Vault path on Windows: user's username is `123`, vault at `{{WINDOWS_USER_DOCS}}\AI_Vault\Admin`.
 
 ### 2. Local File Access (SSH Machine)
-**When**: Vault lives directly on the VPS SSH host.
+**When**: Vault lives directly on {{AGENT_HOST}} SSH host.
 
 **Steps**:
 ```bash
@@ -95,7 +95,7 @@ New-Item -ItemType Directory -Force -Path 'C:/Target/Vault/Subfolder'
 # 2. Copy files
 Copy-Item 'C:/Source/Vault/file.md' 'C:/Target/Vault/Subfolder/' -Force
 ```
-Or from VPS (files already on VPS via SSHFS mount):
+Or from {{AGENT_HOST}} (files already on {{AGENT_HOST}} via SSHFS mount):
 ```bash
 scp ~/.obsidian_vault/source/file.md {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"C:/Target/Vault/Subfolder/"
 ```
@@ -109,7 +109,7 @@ scp ~/.obsidian_vault/source/file.md {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"C:/
 
 **Pitfalls**:
 - ⚠️ PowerShell `Copy-Item` fails if target parent folder doesn't exist — always `New-Item -ItemType Directory -Force` first
-- ⚠️ SCP from VPS to Windows works for files already on VPS (SSHFS mount). For pure Windows-to-Windows, use PowerShell over SSH.
+- ⚠️ SCP from {{AGENT_HOST}} to Windows works for files already on {{AGENT_HOST}} (SSHFS mount). For pure Windows-to-Windows, use PowerShell over SSH.
 - ⚠️ Windows paths in SSH commands: use forward slashes and quote the full path string.
 - ⚠️ Daily briefs + session summaries write to `~/.obsidian_vault/Calendar/` (not separate folders).
 - ⚠️ Cron jobs run in fresh sessions — prompt must be self-contained.
@@ -192,14 +192,14 @@ Then use `native-mcp` skill to connect.
 ## User Environment
 
 - **{{DESKTOP_HOST}} (vault host):** `{{INFERENCE_HOST_IP}}` — also runs {{LMS}}
-- **VPS (agent host):** `{{AGENT_HOST_IP}}` (user: {{USER}}, Ubuntu)
+- **VPS (agent host ({{AGENT_HOST}})):** `{{AGENT_HOST_IP}}` (user: {{USER}}, Ubuntu)
 - **Vault path on Windows:** TBD — needs confirmation from user
 - SSH server already running on {{DESKTOP_HOST}}
-- Hermes `hermes mcp` CLI available on VPS for adding MCP servers
+- Hermes `hermes mcp` CLI available on {{AGENT_HOST}} for adding MCP servers
 
 ## Recommended Architecture
 
-**MCP server on {{DESKTOP_HOST}} + SSH tunnel from VPS** — this is the preferred route for this user's setup. The MCP server handles vault I/O locally where the vault lives, SSH tunnel encrypts the connection, no file lock conflicts.
+**MCP server on {{DESKTOP_HOST}} + SSH tunnel from {{AGENT_HOST}}** — this is the preferred route for this user's setup. The MCP server handles vault I/O locally where the vault lives, SSH tunnel encrypts the connection, no file lock conflicts.
 
 ### SSH Tunnel Setup (VPS → {{DESKTOP_HOST}})
 ```bash
@@ -209,7 +209,7 @@ ssh -L {{TUNNEL_PORT}}:localhost:{{TUNNEL_PORT}} {{USER}}@{{INFERENCE_HOST_IP}} 
 
 ### Register MCP Server with Hermes
 ```bash
-# On VPS, after tunnel is up:
+# On {{AGENT_HOST}}, after tunnel is up:
 hermes mcp add obsidian --url http://localhost:3000
 ```
 
@@ -224,7 +224,7 @@ pip install obsidian-mcp-server
 
 ### Alternative: SSHFS Mount (if MCP proves problematic)
 ```bash
-# On VPS:
+# On {{AGENT_HOST}}:
 {{REMOTE_MOUNT_TOOL}} {{USER}}@{{INFERENCE_HOST_IP}}:/path/to/vault /mnt/obsidian
 # Then use read_file/search_files directly on /mnt/obsidian/
 ```

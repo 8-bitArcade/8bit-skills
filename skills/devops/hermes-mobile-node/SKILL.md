@@ -28,8 +28,8 @@ Telegram/Discord → VPS Hermes → Workstation ({{LMS}}, primary, tier 1)
 
 - VPS is the single entry point for all messaging. No split agents.
 - Phone runs `llama.cpp` via Termux for local inference.
-- Health endpoint on VPS tells phone whether to run locally or defer.
-- Cron relay on VPS routes jobs across three tiers: workstation → mobile → OpenRouter.
+- Health endpoint on {{AGENT_HOST}} tells phone whether to run locally or defer.
+- Cron relay on {{AGENT_HOST}} routes jobs across three tiers: workstation → mobile → OpenRouter.
 - OpenRouter API key is read from `~/.hermes/config.yaml` (not env) when running as standalone script.
 
 ## Execution Rules
@@ -77,7 +77,7 @@ Phone should call `/mobile` (not `/health`) to minimize data usage.
 ## Cron Relay Routing Logic (Three-Tier)
 
 1. Check workstation health via `http://localhost:9191/mobile`
-2. **Tier 1:** Workstation online → run job normally on VPS
+2. **Tier 1:** Workstation online → run job normally on {{AGENT_HOST}}
 3. **Tier 2:** Workstation offline → look up phone in {{MESH_VPN}} (`{{MESH_VPN_CMD}} status --json`, match hostname containing "nubia"/"z70" or OS == "android")
    - Phone found → forward job to phone via `http://<tailscale_ip>:9192/cron/trigger` (2000-char context limit)
    - Phone fails → log and fall through to tier 3
@@ -111,7 +111,7 @@ The phone needs a model manager because RAM is finite (24GB shared with OS). Loa
 - **{{MESH_VPN}} IP changes** — mobile uses DHCP within {{MESH_VPN}} network. Cron relay resolves IP dynamically from `{{MESH_VPN_CMD}} status --json`, never hardcode
 - **Workstation offline ≠ sleep** — if workstation is truly off {{MESH_VPN}} (not just asleep), last_seen timestamp will be hours old. Use {{MESH_VPN}} `online` field, not just `last_seen`
 - **Model GGUFs are large** — download over WiFi, not mobile data. Use a download script that validates SHA256.
-- **OpenRouter key not in VPS env** — Hermes config has the key but standalone Python scripts can't see Hermes env. The `cron_relay.py` script reads the key from `~/.hermes/config.yaml` directly. Don't rely on `{{OR_API_KEY}}` env var on the VPS.
+- **OpenRouter key not in VPS env** — Hermes config has the key but standalone Python scripts can't see Hermes env. The `cron_relay.py` script reads the key from `~/.hermes/config.yaml` directly. Don't rely on `{{OR_API_KEY}}` env var on {{AGENT_HOST}}.
 
 ## Verification
 

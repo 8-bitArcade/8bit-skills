@@ -1,7 +1,7 @@
 # GPU Transcription Setup
 
 ## Overview
-Audio transcription runs on Windows {{GPU_MODEL}} ({{INFERENCE_HOST_IP}}) via SSH. Uses `{{WHISPER_MODEL}}` model (~1.5GB) for best quality. Falls back to VPS CPU `tiny` model if GPU unavailable.
+Audio transcription runs on Windows {{GPU_MODEL}} ({{INFERENCE_HOST_IP}}) via SSH. Uses `{{WHISPER_MODEL}}` model (~1.5GB) for best quality. Falls back to {{AGENT_HOST}} CPU `tiny` model if GPU unavailable.
 
 ## Prerequisites
 - `openai-whisper` + CUDA/PyTorch installed on Windows
@@ -33,7 +33,7 @@ ssh {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}} '$env:PATH = [System.Environment]::Ge
 ## Model Notes
 - `{{WHISPER_MODEL}}`: Best quality, ~1.5GB. Default for GPU.
 - `tiny`: VPS CPU fallback only (~1GB). Lowest accuracy.
-- `small`/`medium`: OOM on VPS (7.8GB RAM). Do not use.
+- `small`/`medium`: OOM on {{AGENT_HOST}} (7.8GB RAM). Do not use.
 
 ## Verified Working
 - 2026-05-28: `{{WHISPER_MODEL}}` on {{GPU_MODEL}} + ffmpeg 8.1.1 via winget. Test transcription of 4min m4a completed successfully with accurate timestamps and text.
