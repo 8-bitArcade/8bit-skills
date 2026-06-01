@@ -53,15 +53,15 @@ Uses `{{MODEL_LARGE}}` on {{LMS}}. Creates `.backup.md` of each original before 
 
 ## Model Selection
 - `{{WHISPER_MODEL}}` (~1.5GB): GPU transcription on Windows {{GPU_MODEL}}. Best quality. Default for `transcribe-gpu.py`.
-- `medium` (~5GB): Too large for VPS (7.8GB RAM) — causes OOM kills.
+- `medium` (~5GB): Too large for {{AGENT_HOST}} (7.8GB RAM) — causes OOM kills.
 - `small` (~2.5GB): Also OOM-kills on {{AGENT_HOST}}. Do not use.
-- `tiny` (~1GB): VPS fallback only. Lowest accuracy.
+- `tiny` (~1GB): {{AGENT_HOST}} fallback only. Lowest accuracy.
 
 **Always pass `--language en`** to reduce hallucination on tech terms, names, and non-English-sounding words. Omitting this causes Whisper to guess language and introduces errors.
 
 ## Model Upgrade History
 - 2026-05-29: Added LLM post-processing step using `{{MODEL_DEFAULT}}` on {{LMS}}. 27b model too slow (timeouts on large files). Timeout set to 300s. Script filters out `.backup.md` files to avoid double-processing. Creates `.backup.md` of originals before overwriting.
-- 2026-05-28: Upgraded from `tiny` → GPU `{{WHISPER_MODEL}}` on Windows {{GPU_MODEL}}. User prioritizes quality over speed. VPS CPU models (`small`, `medium`) cause OOM — GPU is now the primary path. Verified working with ffmpeg installed via winget.
+- 2026-05-28: Upgraded from `tiny` → GPU `{{WHISPER_MODEL}}` on Windows {{GPU_MODEL}}. User prioritizes quality over speed. {{AGENT_HOST}} CPU models (`small`, `medium`) cause OOM — GPU is now the primary path. Verified working with ffmpeg installed via winget.
 
 ## Pre-flight Check
 
@@ -98,7 +98,7 @@ with open(os.path.expanduser('~/.hermes/cron_state/last_transcribed_files.json')
 
 ## Pitfalls
 - **{{LMS}} Whisper API does NOT work**: {{LMS}} loads `whisper-large-v3` but does NOT expose `/v1/audio/transcriptions` endpoint. Do NOT attempt to use {{LMS}}'s Whisper via HTTP API — it will fail with "Unsupported Media Type". Use local `openai-whisper` on {{AGENT_HOST}} or GPU transcription instead.
-- **VPS RAM limits**: The VPS has 7.8GB RAM. Models larger than `tiny` (small, medium) cause OOM kills. Do NOT attempt them — the process will be killed silently with exit code -1 and no output.
+- **{{AGENT_HOST}} RAM limits**: The {{AGENT_HOST}} has 7.8GB RAM. Models larger than `tiny` (small, medium) cause OOM kills. Do NOT attempt them — the process will be killed silently with exit code -1 and no output.
 - **`--compute_type` is NOT a valid CLI flag**: This is a Python API parameter only. The Whisper CLI does not accept it.
 - **`--fp16 False` increases memory usage**: Disabling fp16 uses float32 which doubles memory. Keep default (`True`) on CPU.
 - **GPU transcription requires SSH access to Windows**: If the Windows machine is off or unreachable, fall back to {{AGENT_HOST}} `tiny` model.
@@ -112,8 +112,8 @@ with open(os.path.expanduser('~/.hermes/cron_state/last_transcribed_files.json')
 - **Foreground 5-file batches are reliable**: Groups of ≤5 files (~7-10 min) complete reliably as a single foreground command. Larger groups risk the silent -1 exit. When processing many remaining files, use repeated 5-file foreground loops.
 
 ## Notes
-- VPS has no GPU — transcription is CPU-only (4 cores, AMD EPYC)
-- GPU transcription on {{GPU_MODEL}} is dramatically faster and higher quality than any VPS model
+- {{AGENT_HOST}} has no GPU — transcription is CPU-only (4 cores, AMD EPYC)
+- GPU transcription on {{GPU_MODEL}} is dramatically faster and higher quality than any {{AGENT_HOST}} model
 - **Keep files under 30min for reasonable processing time**
 - Reference: [GPU transcription setup details](references/gpu-transcription-setup.md)
 - Reference: [GPU transcription troubleshooting](references/gpu-transcription-troubleshooting.md)

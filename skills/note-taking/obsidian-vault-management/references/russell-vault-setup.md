@@ -5,10 +5,10 @@
 - **Remote host**: `{{INFERENCE_HOST_IP}}` ({{DESKTOP_HOST}}, same as {{LMS}})
 - **Remote user**: `123`
 - **Mount point on {{AGENT_HOST}}**: `~/.obsidian_vault`
-- **SSH key**: `~/.ssh/id_ed25519` (VPS) → added to Windows `~/.ssh/authorized_keys`
+- **SSH key**: `~/.ssh/id_ed25519` ({{AGENT_HOST}}) → added to Windows `~/.ssh/authorized_keys`
 
 ## Setup Steps Completed
-1. Added VPS public key to {{DESKTOP_HOST}} `authorized_keys` (ran as admin)
+1. Added {{AGENT_HOST}} public key to {{DESKTOP_HOST}} `authorized_keys` (ran as admin)
 2. Verified SSH connectivity: `ssh {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}} "whoami"` → `gaming-ai-3090r\123`
 3. Enabled `user_allow_other` in `/etc/fuse.conf` on {{AGENT_HOST}}
 4. Mounted vault: `{{REMOTE_MOUNT_TOOL}} {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"{{WINDOWS_USER_DOCS}}/AI_Vault/Admin" ~/.obsidian_vault -o allow_other,reconnect`

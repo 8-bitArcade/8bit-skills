@@ -22,4 +22,4 @@ Audio transcription endpoints are NOT implemented, even when Whisper models are 
 Use `openai-whisper` CLI directly on {{AGENT_HOST}} instead. Whisper loads the model locally and processes audio without needing an API endpoint.
 
 ## Security Note
-User prefers VPS transcription (data stays local) over SSH to {{DESKTOP_HOST}} with {{GPU_MODEL}}, even though GPU would be significantly faster. Privacy > speed.
+User prefers {{AGENT_HOST}} transcription (data stays local) over SSH to {{DESKTOP_HOST}} with {{GPU_MODEL}}, even though GPU would be significantly faster. Privacy > speed.

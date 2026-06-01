@@ -122,7 +122,9 @@ Apply this to any long-lived process: health endpoints, model servers, watchers.
 
 ## Pitfalls
 
-- **SSHFS mounts become stale after VPS reboot** — cron jobs depending on them will hang without subprocess timeouts
+See `references/cron-timeout-postmortem-2026-06-01.md` for a real-world case study of 3 simultaneous cron failures and the fixes applied.
+
+- **SSHFS mounts become stale after {{AGENT_HOST}} reboot** — cron jobs depending on them will hang without subprocess timeouts
 - **`signal.alarm()` doesn't work for FUSE syscalls** — only subprocess timeouts do
 - **Filenames with spaces/parens** break with f-string shell interpolation — use JSON helpers instead
 - **Agent-driven cron jobs without `model` set** will fail silently
@@ -132,6 +134,9 @@ Apply this to any long-lived process: health endpoints, model servers, watchers.
 - **`no_agent=True` with `enabled_toolsets` set is contradictory** — when `no_agent=True`, the script IS the job and the prompt + toolsets are completely ignored. If you want agent-driven jobs (e.g., "run script, then analyze and report"), set `no_agent: false` (default) and keep toolsets.
 - **Skill injection into cron prompts causes timeouts** — attaching a skill via `skills: ["some-skill"]` injects the full SKILL.md into the prompt. For jobs running on {{LMS}} with a 120s timeout, a 300-line SKILL.md + a long prompt will time out. Always prefer `skills: []` (empty) and write a self-contained prompt with explicit paths and steps.
 - **`gh repo transfer` / org API transfer requires org create-repo permission** — `gh api repos/{owner}/{repo}/transfer -f new_owner=Org` returns 422 if the authenticated user can't create repos in the target org. The only reliable path is GitHub web UI: repo Settings → Danger Zone → Transfer ownership.
+- **`hermes cron list --all` may not be a valid CLI command** — use `cronjob(action="list")` API or `ps aux | grep cron` to verify cron processes instead of shelling out to CLI commands that may not exist.
+- **`[SILENT]` instructions in skills conflict with cron delivery** — skills that contain `[SILENT]` or similar suppression instructions will conflict with cron jobs that need to deliver results. Never use `[SILENT]` in skills that might be loaded as cron job skills.
+- **Stagger concurrent cron jobs on {{LMS}}** — when multiple agent-driven cron jobs fire near-simultaneously, they queue behind each other on the inference server. Each job gets less wall-clock time and may timeout. Stagger schedules by at least 5 minutes for jobs running on the same {{LMS}} instance.
 
 ## Verification
 

@@ -30,14 +30,14 @@ This skill handles all interactions with Obsidian vaults when no native plugin e
 
 **Prerequisites**:
 - SSH server running on {{DESKTOP_HOST}} (Settings → Optional Features → OpenSSH Server)
-- VPS public key added to Windows `authorized_keys`
+- {{AGENT_HOST}} public key added to Windows `authorized_keys`
 - `/etc/fuse.conf` on {{AGENT_HOST}} has `user_allow_other` uncommented
 - `{{REMOTE_MOUNT_TOOL}}` installed on {{AGENT_HOST}} (`apt install {{REMOTE_MOUNT_TOOL}}`)
 
 **Steps**:
 ```bash
-# 1. Add VPS public key to {{DESKTOP_HOST}} (run in PowerShell as Administrator)
-$key = "ssh-ed25519 AAAA... (VPS pub key)"
+# 1. Add {{AGENT_HOST}} public key to {{DESKTOP_HOST}} (run in PowerShell as Administrator)
+$key = "ssh-ed25519 AAAA... ({{AGENT_HOST}} pub key)"
 Set-Content -Path "$env:USERPROFILE\.ssh\authorized_keys" -Value $key -Force
 icacls "$env:USERPROFILE\.ssh\authorized_keys" /grant "USERNAME:(R,W)"
 
@@ -192,7 +192,7 @@ Then use `native-mcp` skill to connect.
 ## User Environment
 
 - **{{DESKTOP_HOST}} (vault host):** `{{INFERENCE_HOST_IP}}` — also runs {{LMS}}
-- **VPS (agent host ({{AGENT_HOST}})):** `{{AGENT_HOST_IP}}` (user: {{USER}}, Ubuntu)
+- **{{AGENT_HOST}}:** `{{AGENT_HOST_IP}}` (user: {{USER}}, Ubuntu)
 - **Vault path on Windows:** TBD — needs confirmation from user
 - SSH server already running on {{DESKTOP_HOST}}
 - Hermes `hermes mcp` CLI available on {{AGENT_HOST}} for adding MCP servers
@@ -201,9 +201,9 @@ Then use `native-mcp` skill to connect.
 
 **MCP server on {{DESKTOP_HOST}} + SSH tunnel from {{AGENT_HOST}}** — this is the preferred route for this user's setup. The MCP server handles vault I/O locally where the vault lives, SSH tunnel encrypts the connection, no file lock conflicts.
 
-### SSH Tunnel Setup (VPS → {{DESKTOP_HOST}})
+### SSH Tunnel Setup ({{AGENT_HOST}} → {{DESKTOP_HOST}})
 ```bash
-# From VPS, forward local port 3000 to {{DESKTOP_HOST}}'s MCP server
+# From {{AGENT_HOST}}, forward local port 3000 to {{DESKTOP_HOST}}'s MCP server
 ssh -L {{TUNNEL_PORT}}:localhost:{{TUNNEL_PORT}} {{USER}}@{{INFERENCE_HOST_IP}} -N -f
 ```
 

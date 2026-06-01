@@ -32,7 +32,7 @@ ssh {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}} '$env:PATH = [System.Environment]::Ge
 
 ## Model Notes
 - `{{WHISPER_MODEL}}`: Best quality, ~1.5GB. Default for GPU.
-- `tiny`: VPS CPU fallback only (~1GB). Lowest accuracy.
+- `tiny`: {{AGENT_HOST}} CPU fallback only (~1GB). Lowest accuracy.
 - `small`/`medium`: OOM on {{AGENT_HOST}} (7.8GB RAM). Do not use.
 
 ## Verified Working

@@ -2,7 +2,7 @@
 
 ## Prerequisites Checklist
 - [ ] SSH server running on remote machine
-- [ ] Key-based auth configured (VPS public key in remote's `authorized_keys`)
+- [ ] Key-based auth configured ({{AGENT_HOST}} public key in remote's `authorized_keys`)
 - [ ] `{{REMOTE_MOUNT_TOOL}}` installed on agent host ({{AGENT_HOST}})
 - [ ] `/etc/fuse.conf` has `user_allow_other` uncommented
 

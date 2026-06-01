@@ -5,7 +5,7 @@
 **Purpose**: Production-ready agent skills for the 8Bit AI platform
 **Auto-sync**: Daily at 08:00 CEST (cron job ID: 85b2e195887e)
 
-## Setup on a Fresh VPS
+## Setup on a Fresh {{AGENT_HOST}}
 
 1. Clone the repo:
    ```bash

@@ -61,7 +61,7 @@ def check_lmstudio():
 
 
 def get_vps_stats():
-    """Get VPS disk/memory/load stats."""
+    """Get {{AGENT_HOST}} disk/memory/load stats."""
     stats = {}
     try:
         df = subprocess.run(["df", "-h", "/"], capture_output=True, text=True, timeout=5)

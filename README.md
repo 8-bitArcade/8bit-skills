@@ -18,7 +18,7 @@ Works on: local machine, VPS, cloud VM, or hybrid multi-device.
 - **devops/hermes-context-optimization** — Diagnose and reduce Hermes agent context window pressure — config tuning, memory pruning, skill management.
 - **devops/hermes-cron-infrastructure** — Maintain, debug, and create Hermes cron jobs and their supporting scripts — including SSHFS timeout handling and health monitoring.
 - **devops/hermes-lmstudio-catalog** — Configure {{LMS}} model catalog in Hermes — add custom models to slash command dropdown.
-- **devops/hermes-mobile-node** — Design and deploy a mobile AI inference node (phone) that acts as failover for a VPS+workstation setup. Covers health endpoints, cron relay routing, model management, and Termux deployment.
+- **devops/hermes-mobile-node** — Design and deploy a mobile AI inference node (phone) that acts as failover for a {{AGENT_HOST}}+workstation setup. Covers health endpoints, cron relay routing, model management, and Termux deployment.
 - **devops/hermes-model-catalog-troubleshooting** — Troubleshoot {{LMS}} model catalog issues in Hermes — dropdown not showing models, YAML errors, gateway caching.
 - **devops/hermes-provider-config** — Configure and troubleshoot Hermes LLM providers — {{LMS}}, OpenRouter fallback, API keys, privacy settings, and gateway caching.
 - **devops/hermes-runtime-ui** — Configure Hermes runtime UI features — context window indicator footer, display settings, and message formatting for Telegram/Discord gateway.
@@ -83,4 +83,4 @@ To contribute: fork this repo, add your skill, and open a PR.
 
 ---
 
-*Auto-synced and sanitized from production. Last updated: 2026-06-01 07:43 UTC*
+*Auto-synced and sanitized from production. Last updated: 2026-06-01 07:45 UTC*

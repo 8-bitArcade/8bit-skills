@@ -69,7 +69,7 @@ When {{USER}} asks to "retry" or "redraft" a previous post with updated voice:
   - `Efforts/Transcript/` — Audio diary transcripts (date-stamped, rich raw material for topics)
   - `Efforts/Brainstorming/`, `Efforts/Research/`, `Efforts/Diary/` — Ideas, notes, reflections
   - `AI OS/` — 8Bit product/tech context
-- VPS daily briefs
+- {{AGENT_HOST}} daily briefs
 - Session logs (non-confidential)
 - Audio transcripts (approved)
 - Planning documentation

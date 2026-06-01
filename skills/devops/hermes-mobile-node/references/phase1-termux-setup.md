@@ -44,7 +44,7 @@ cmake --build build -j6 --config Release
 
 Vulkan support requires the Vulkan SDK. On Android, the GPU drivers should expose Vulkan natively.
 
-### 5. Set Up SSH Key for VPS
+### 5. Set Up SSH Key for {{AGENT_HOST}}
 
 ```bash
 ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""

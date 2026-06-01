@@ -41,7 +41,7 @@
     "WASM",
     "WebAssembly",
     "nemotron",
-    "Linux VPS",
+    "Linux {{AGENT_HOST}}",
     "AI OS"
   ],
   "concepts": [

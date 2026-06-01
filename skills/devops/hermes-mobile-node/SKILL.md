@@ -1,6 +1,6 @@
 ---
 name: hermes-mobile-node
-description: "Design and deploy a mobile AI inference node (phone) that acts as failover for a VPS+workstation setup. Covers health endpoints, cron relay routing, model management, and Termux deployment."
+description: "Design and deploy a mobile AI inference node (phone) that acts as failover for a {{AGENT_HOST}}+workstation setup. Covers health endpoints, cron relay routing, model management, and Termux deployment."
 version: 1.0.0
 author: {{USER}}
 license: MIT
@@ -14,19 +14,19 @@ Build a phone into an AI inference failover device. When the workstation is offl
 
 - Setting up a mobile phone as an AI inference node
 - Building health endpoints for workstation availability detection
-- Routing cron jobs between VPS, workstation, and mobile
+- Routing cron jobs between {{AGENT_HOST}}, workstation, and mobile
 - Optimizing `llama.cpp` inference on Android/Termux
 - Managing model loading/unloading on a RAM-constrained mobile device
 
 ## Architecture
 
 ```
-Telegram/Discord → VPS Hermes → Workstation ({{LMS}}, primary, tier 1)
+Telegram/Discord → {{AGENT_HOST}} Hermes → Workstation ({{LMS}}, primary, tier 1)
                               → Phone (llama.cpp, failover, tier 2)
                               → OpenRouter (cloud API, ultimate fallback, tier 3)
 ```
 
-- VPS is the single entry point for all messaging. No split agents.
+- {{AGENT_HOST}} is the single entry point for all messaging. No split agents.
 - Phone runs `llama.cpp` via Termux for local inference.
 - Health endpoint on {{AGENT_HOST}} tells phone whether to run locally or defer.
 - Cron relay on {{AGENT_HOST}} routes jobs across three tiers: workstation → mobile → OpenRouter.
@@ -36,7 +36,7 @@ Telegram/Discord → VPS Hermes → Workstation ({{LMS}}, primary, tier 1)
 
 - **Build the minimal working version first.** Get one model loading and responding before optimizing.
 - **Phone scripts go in `~/.hermes/scripts/mobile-node/`** — ready to `scp` to the phone.
-- **Always test the health endpoint** after any VPS restart: `curl -s http://localhost:9191/mobile`
+- **Always test the health endpoint** after any {{AGENT_HOST}} restart: `curl -s http://localhost:9191/mobile`
 - **Test cron relay** after changes: `python3 ~/.hermes/scripts/cron_relay.py --check`
 - **Workstation-only jobs must be explicitly listed** in `WORKSTATION_ONLY_JOBS` in `cron_relay.py`. Everything else is assumed mobile-compatible.
 - **When workstation is offline**, the health endpoint returns `run_local: true`. No separate "offline mode" flag.
@@ -67,9 +67,9 @@ To restart: kill then re-launch.
 
 ## Health Endpoint Design
 
-The health endpoint runs on the **VPS** (not the workstation). It polls the workstation via {{MESH_VPN}} status and `curl` to {{LMS}}. Returns two views:
+The health endpoint runs on the **{{AGENT_HOST}}** (not the workstation). It polls the workstation via {{MESH_VPN}} status and `curl` to {{LMS}}. Returns two views:
 
-- `/health` — full diagnostics (workstation {{MESH_VPN_CMD}} + {{LMS}} + VPS disk/memory/load)
+- `/health` — full diagnostics (workstation {{MESH_VPN_CMD}} + {{LMS}} + {{AGENT_HOST}} disk/memory/load)
 - `/mobile` — minimal decision for phone: `{"run_local": true/false, "workstation_online": false, "timestamp": "..."}`
 
 Phone should call `/mobile` (not `/health`) to minimize data usage.
@@ -111,7 +111,7 @@ The phone needs a model manager because RAM is finite (24GB shared with OS). Loa
 - **{{MESH_VPN}} IP changes** — mobile uses DHCP within {{MESH_VPN}} network. Cron relay resolves IP dynamically from `{{MESH_VPN_CMD}} status --json`, never hardcode
 - **Workstation offline ≠ sleep** — if workstation is truly off {{MESH_VPN}} (not just asleep), last_seen timestamp will be hours old. Use {{MESH_VPN}} `online` field, not just `last_seen`
 - **Model GGUFs are large** — download over WiFi, not mobile data. Use a download script that validates SHA256.
-- **OpenRouter key not in VPS env** — Hermes config has the key but standalone Python scripts can't see Hermes env. The `cron_relay.py` script reads the key from `~/.hermes/config.yaml` directly. Don't rely on `{{OR_API_KEY}}` env var on {{AGENT_HOST}}.
+- **OpenRouter key not in {{AGENT_HOST}} env** — Hermes config has the key but standalone Python scripts can't see Hermes env. The `cron_relay.py` script reads the key from `~/.hermes/config.yaml` directly. Don't rely on `{{OR_API_KEY}}` env var on {{AGENT_HOST}}.
 
 ## Verification
 
@@ -122,8 +122,8 @@ The phone needs a model manager because RAM is finite (24GB shared with OS). Loa
 
 ## Reference Files
 
-- `scripts/workstation_health.py` — Health endpoint (VPS). Run via `screen -dmS hermes-health python3 ... --serve`
-- `scripts/cron_relay.py` — Three-tier cron routing (VPS). Run via `python3 ... --check` to test
+- `scripts/workstation_health.py` — Health endpoint ({{AGENT_HOST}}). Run via `screen -dmS hermes-health python3 ... --serve`
+- `scripts/cron_relay.py` — Three-tier cron routing ({{AGENT_HOST}}). Run via `python3 ... --check` to test
 - `scripts/hermes_mobile.py` — Mobile service scaffold (phone/Termux). Run via `python3 ... --daemon`
 - `scripts/mobile_model_manager.sh` — Model loader/unloader (phone/Termux)
 - `references/phase1-termux-setup.md` — Phase 1 Termux setup steps (phone-side)

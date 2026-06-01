@@ -14,7 +14,7 @@ REMOTE_USER = "123"
 REMOTE_HOST = "{{INFERENCE_HOST_IP}}"
 REMOTE_DIR = "{{WINDOWS_TEMP}}/whisper_work"
 GPU_MODEL = "{{WHISPER_MODEL}}"
-CPU_MODEL = "tiny"  # VPS only has 7.8GB RAM
+CPU_MODEL = "tiny"  # {{AGENT_HOST}} only has 7.8GB RAM
 
 def run(cmd, check=True):
     """Run a shell command."""

@@ -16,7 +16,7 @@ Manage the 8Bit Skills Library — a curated collection of production-ready agen
 - Updating an existing skill that's already in the library
 - Running the sync script manually or debugging sync failures
 - Reviewing the skill library for quality, overlap, or gaps
-- Setting up the library on a fresh VPS
+- Setting up the library on a fresh {{AGENT_HOST}}
 
 ## Library Overview
 
@@ -131,13 +131,13 @@ When the system prompts a review of the skill library (meta-review):
 - **The glob pattern in README generation** must handle both flat skills and category skills (`skills/*/` and `skills/*/*/`)
 - **`__pycache__` and `*.pyc`** are excluded from sync — don't accidentally include them in the library
 - **The `.bundled_manifest` uses plugin package names**, not skill directory names. User skills like `automated-reporting` are NOT in the manifest even if they sound like bundled features.
-- **GitHub org transfer requires web UI** — `gh api repos/{owner}/{repo}/transfer -f new_owner=Org` returns HTTP 422 when the authenticated user lacks org create-repo permission (common for VPS SSH tokens). Workaround: owner must go to repo Settings → Danger Zone → Transfer ownership on github.com. No CLI/API workaround exists.
+- **GitHub org transfer requires web UI** — `gh api repos/{owner}/{repo}/transfer -f new_owner=Org` returns HTTP 422 when the authenticated user lacks org create-repo permission (common for {{AGENT_HOST}} SSH tokens). Workaround: owner must go to repo Settings → Danger Zone → Transfer ownership on github.com. No CLI/API workaround exists.
 - **Moving a repo from personal to org after creation** — it's not just an API call. Plan ahead: if the repo should live in the org, either (a) have an org owner create it empty first, then push, or (b) use the web UI transfer.
 - **Don't store secrets** in skill files. The repo should be shareable. Use env vars or config that the user provides.
 
 ## References
 
-- `references/github-repo-setup.md` — repo URL, fresh-VPS setup, current skill count
+- `references/github-repo-setup.md` — repo URL, fresh-{{AGENT_HOST}} setup, current skill count
 - `templates/skill-template.md` — canonical SKILL.md scaffold for new skills
 
 ## Verification
