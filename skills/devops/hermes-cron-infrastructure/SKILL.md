@@ -90,8 +90,11 @@ A daily health check runs at 06:00 (`health-check.py` + agent prompt). Monitors:
 - SSHFS mount responsiveness
 - {{LMS}} connectivity
 - Cron job error count
+- **Legacy process cleanup** — Paperclip removed June 2026. If Paperclip processes appear, kill and remove.
 
 The agent prompt auto-fixes: stale mounts (remount via `mount-obsidian-vault.sh`), cron bugs (fix scripts).
+
+**Infrastructure note:** Hermes is sole agent system. Paperclip (legacy) removed — freed 14GB disk, 288MB RAM, 3463 CPU seconds.
 
 **Critical: Keep the agent prompt TIGHT.** The script does the detection — the agent should only:
 1. Parse the JSON result
@@ -123,6 +126,7 @@ Apply this to any long-lived process: health endpoints, model servers, watchers.
 ## Pitfalls
 
 See `references/cron-timeout-postmortem-2026-06-01.md` for a real-world case study of 3 simultaneous cron failures and the fixes applied.
+See `references/paperclip-removal-2026-06.md` for legacy system cleanup (freed 14GB disk, 288MB RAM).
 
 - **SSHFS mounts become stale after {{AGENT_HOST}} reboot** — cron jobs depending on them will hang without subprocess timeouts
 - **`signal.alarm()` doesn't work for FUSE syscalls** — only subprocess timeouts do
@@ -132,11 +136,12 @@ See `references/cron-timeout-postmortem-2026-06-01.md` for a real-world case stu
 - **Agent-driven health checks can timeout even when the script is fine** — the LLM agent's reasoning about results has its own time cost. Keep agent prompts for health checks TIGHT: script runs → agent gets JSON result → agent reports or fixes → done. No open-ended investigation chains. If the job consistently times out, convert to `no_agent: true` with the script delivering its own summary.
 - **SSH backgrounding is blocked** — use `screen -dmS`, never `&`, `nohup`, `setsid`, or `daemon=true`
 - **`no_agent=True` with `enabled_toolsets` set is contradictory** — when `no_agent=True`, the script IS the job and the prompt + toolsets are completely ignored. If you want agent-driven jobs (e.g., "run script, then analyze and report"), set `no_agent: false` (default) and keep toolsets.
-- **Skill injection into cron prompts causes timeouts** — attaching a skill via `skills: ["some-skill"]` injects the full SKILL.md into the prompt. For jobs running on {{LMS}} with a 120s timeout, a 300-line SKILL.md + a long prompt will time out. Always prefer `skills: []` (empty) and write a self-contained prompt with explicit paths and steps.
+- **Skill injection into cron prompts causes timeouts** — attaching a skill via `skills: ["some-skill"]` injects the full SKILL.md into the prompt. For jobs running on {{LMS}} with a 120s timeout, a 300-line SKILL.md + a long prompt will time out. Always prefer `skills: []` (empty) and write a self-contained prompt with explicit paths and steps. **Real case (2026-06-01)**: Weekly Agent Efficiency Audit, Daily Session Summary, and Founder Journal Weekly all failed simultaneously because each had a skill attached. Removing the skill attachment and writing focused 4-6 step prompts fixed all three.
 - **`gh repo transfer` / org API transfer requires org create-repo permission** — `gh api repos/{owner}/{repo}/transfer -f new_owner=Org` returns 422 if the authenticated user can't create repos in the target org. The only reliable path is GitHub web UI: repo Settings → Danger Zone → Transfer ownership.
 - **`hermes cron list --all` may not be a valid CLI command** — use `cronjob(action="list")` API or `ps aux | grep cron` to verify cron processes instead of shelling out to CLI commands that may not exist.
-- **`[SILENT]` instructions in skills conflict with cron delivery** — skills that contain `[SILENT]` or similar suppression instructions will conflict with cron jobs that need to deliver results. Never use `[SILENT]` in skills that might be loaded as cron job skills.
 - **Stagger concurrent cron jobs on {{LMS}}** — when multiple agent-driven cron jobs fire near-simultaneously, they queue behind each other on the inference server. Each job gets less wall-clock time and may timeout. Stagger schedules by at least 5 minutes for jobs running on the same {{LMS}} instance.
+- **`gh repo fork --org` also fails with org permission errors** — `gh repo fork OWNER/REPO --org OrgName` returns HTTP 403 when {{AGENT_HOST}} token lacks org admin rights, same as `gh api repos/{owner}/{repo}/transfer`. The only reliable path to move skills to an org is manual fork via GitHub web UI. Document this blocker in the skills-library-management skill.
+- **`[SILENT]` instructions in skills conflict with cron delivery** — skills that contain `[SILENT]` or similar suppression instructions will conflict with cron jobs that need to deliver results. Never use `[SILENT]` in skills that might be loaded as cron job skills.
 
 ## Verification
 
