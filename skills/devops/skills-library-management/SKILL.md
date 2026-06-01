@@ -102,6 +102,7 @@ bash sync-skills-repo.sh
 The script (v3+ with sanitization + human approval gate):
 1. Reads `~/.hermes/skills/.bundled_manifest` to exclude bundled skills
 2. Reads `~/8Bit-Skills-Library/.denied-skills.json` to exclude denied skills (never synced)
+3. Reads `~/8Bit-Skills-Library/.approval-state.json` to exclude skills in "pending" state (not yet approved)
 3. Copies each skill to a **staging directory** (`$REPO_DIR/.staging/`) via `rsync -a`
 3. Runs `sanitize.py <staging> <repo_skills_dir>` to replace all private data with `{{TEMPLATE}}` variables
 4. Cleans staging directory
@@ -163,6 +164,8 @@ When the system prompts a review of the skill library (meta-review):
 6. After all decisions, run `python3 approval_state.py push` — this removes denied skills from working tree, merges with public remote, and pushes only approved skills
 
 **Denied skills are permanent** — once denied, never asked again. To re-enable, manually remove from `.denied-skills.json`.
+
+**Pending vs Denied**: "Pending" means the skill needs more work before it's ready (e.g., social-media-publishing). "Denied" means the skill will not be published (contains private infra details, personal workflows, etc.). Both are excluded from sync.
 
 **Why not inline keyboards?** Hermes' Telegram adapter intercepts ALL callback queries. It only processes callbacks with specific prefixes (`ea:`, `sc:`, `cl:`, `mp:`, `gt:`). Custom callback data gets eaten by the catch-all. The `clarify` tool is the native Hermes solution — it renders Telegram buttons automatically with the right callback prefix.
 
@@ -244,7 +247,8 @@ This way, a user running everything on one machine sets `{{AGENT_HOST}}` = "my l
 - **`author: {{USER}}` in SKILL.md frontmatter** — the sanitizer replaces this with `{{AUTHOR}}`. If you see `author: {{USER}}` in a repo skill file, it means the sanitizer missed it (it was added after the last sanitize run).
 - **`approval_state.py check` is broken** — it sends Telegram messages via Bot API directly (bypasses Hermes adapter), creates duplicate entries in `.approval-state.json`, and cannot properly filter approved vs denied skills. Never run it. Instead, the agent drives approvals manually using `clarify` and tracks decisions in session memory.
 - **`approval_state.py push` removes denied skills** — before pushing, it reads `.denied-skills.json` and deletes those skills from the working tree. This ensures denied skills never reach the public repo even if they exist locally.
-- **Sync script excludes denied skills** — `sync-skills-repo.sh` reads `.denied-skills.json` and skips those skills entirely during sync, so they never enter the staging repo.
+- **Sync script excludes denied AND pending skills** — `sync-skills-repo.sh` reads both `.denied-skills.json` (permanent blocks) AND `.approval-state.json` pending entries. Skills not yet approved are excluded from sync, not just skills that were explicitly denied.
+- **`.denied-skills.json` uses string entries** — all denied skill names are stored as plain strings in the `denied` array. Mixed dict/string entries will break the sync script's `isinstance(name, dict)` check. Normalize with: `denied['denied'] = [d if isinstance(d, str) else d['name'] for d in denied['denied']]`.
 
 ## References
 

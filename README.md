@@ -1,11 +1,22 @@
 # 8Bit Skills Library
 
-Production-ready, platform-agnostic agent skills for AI agent platforms.
+Production-tested, platform-agnostic agent skill templates for AI agent platforms.
 
-Each skill is a self-contained template — copy it into your `~/.hermes/skills/`
-directory and customize the `{{VARIABLE}}` placeholders for your setup.
+## What These Are
 
-Works on: local machine, VPS, cloud VM, or hybrid multi-device.
+These skills are **templates** — not plug-and-play. Each one was battle-tested in a real production environment, then sanitized and parameterized so you can adapt it to your own setup.
+
+You **will** need to customize them. Every skill uses `{{VARIABLE}}` placeholders that you replace with your actual config values. Think of these as starting points, not finished products.
+
+**No warranty.** These worked for a specific stack (RTX 3090, Linux VPS, LM Studio, Node.js). Yours may differ. Read the SKILL.md, understand what it does, then adapt it.
+
+## How to Use
+
+1. Browse `skills/` and pick what fits your needs
+2. Copy the skill folder into your agent's skills directory (e.g. `~/.hermes/skills/`)
+3. Search for `{{` to find all template variables
+4. Replace each `{{VARIABLE}}` with your actual values
+5. Skills auto-load when their trigger conditions match your context
 
 ## Available Skills
 
@@ -20,53 +31,40 @@ Works on: local machine, VPS, cloud VM, or hybrid multi-device.
 - **note-taking/obsidian-linker** — Automatically inject [[wikilinks]] into Obsidian notes based on a master entity list.
 - **note-taking/obsidian-vault-management** — Use when managing Obsidian vaults via file tools, web publishing endpoints, and sync workflows. Covers local file access, remote mounting, and custom script integration for note retrieval/editing.
 
-## Quick Start
-
-1. Browse `skills/` and pick what you need
-2. Copy the skill folder into your `~/.hermes/skills/`
-3. Search for `{{` to find template variables
-4. Replace each `{{VARIABLE}}` with your actual setup values
-5. Skills auto-load when their trigger conditions match
-
 ## Platform Variables
 
-Every skill uses the same template variables so you consistently describe
-your setup once and all skills adapt:
+Every skill uses the same template variables so you describe your setup once and all skills adapt:
 
-| Variable | What It Means | Examples |
-|----------|---------------|----------|
-| `{{AGENT_HOST_IP}}` | Where the agent runs (VPS, local, cloud) | `192.168.1.10`, `10.0.0.1` |
-| `{{INFERENCE_HOST_IP}}` | Where GPU/LLM inference runs | `192.168.1.100`, `localhost` |
-| `{{DESKTOP_HOST}}` | Your desktop/laptop machine | `my-pc`, `macbook-pro` |
-| `{{LMS_HOST}}` | LLM server (LM Studio, vLLM, etc.) | `192.168.1.100:1234` |
-| `{{LMS}}` | LLM server software name | `LM Studio`, `Ollama`, `vLLM` |
-| `{{MODEL_LARGE}}` | Primary/complex model | `qwen/qwen3.6-27b` |
-| `{{MODEL_FAST}}` | Fast/cheap model | `nemotron-nano-4b` |
-| `{{VAULT_PATH}}` | Obsidian vault location | `~/.obsidian_vault`, `~/Documents/Vault` |
-| `{{MESH_VPN}}` | VPN/mesh networking | `Tailscale`, `ZeroTier` |
-| `{{GPU_MODEL}}` | GPU for inference | `RTX 3090`, `M4 Max` |
-| `{{DOMAIN}}` | Your domain | `example.com` |
-| `{{HERMES_HOME}}` | Agent home directory | `~/.hermes` |
-| `{{BACKEND_PORT}}` | API/backend port | `3001`, `8080` |
-| `{{GITHUB_USER}}` | Your GitHub username | `yourname` |
-| `{{GITHUB_ORG}}` | Your GitHub organization | `yourorg` |
-| `{{USER}}` | System username | `youruser` |
-| `{{ADMIN_EMAIL}}` | Admin email | `admin@example.com` |
-| `{{WHISPER_MODEL}}` | Transcription model | `large-v3-turbo` |
+- `{{AGENT_HOST_IP}}` — Where the agent runs (VPS, local, cloud)
+- `{{INFERENCE_HOST_IP}}` — Where GPU/LLM inference runs
+- `{{DESKTOP_HOST}}` — Your desktop/laptop machine
+- `{{LMS_HOST}}` — LLM server (LM Studio, vLLM, etc.)
+- `{{LMS}}` — LLM server software name
+- `{{MODEL_LARGE}}` — Primary/complex model
+- `{{MODEL_FAST}}` — Fast/cheap model
+- `{{VAULT_PATH}}` — Obsidian vault location
+- `{{MESH_VPN}}` — VPN/mesh networking
+- `{{GPU_MODEL}}` — GPU for inference
+- `{{DOMAIN}}` — Your domain
+- `{{HERMES_HOME}}` — Agent home directory
+- `{{BACKEND_PORT}}` — API/backend port
+- `{{GITHUB_USER}}` — Your GitHub username
+- `{{GITHUB_ORG}}` — Your GitHub organization
+- `{{USER}}` — System username
+- `{{ADMIN_EMAIL}}` — Admin email
+- `{{WHISPER_MODEL}}` — Transcription model
 
 Each skill's SKILL.md notes which variables it uses.
 
-## Architecture Skills Support
+## Supported Setups
 
 Skills are topology-agnostic. Whether you run:
-- **Single machine**: agent + inference on one box
-- **VPS + workstation**: agent on VPS, inference on local GPU
-- **Cloud VM**: everything on a cloud instance
-- **Hybrid multi-device**: failover between devices
+- **Single machine** — agent + inference on one box
+- **VPS + workstation** — agent on VPS, inference on local GPU
+- **Cloud VM** — everything on a cloud instance
+- **Hybrid multi-device** — failover between devices
 
-The `{{AGENT_HOST}}` and `{{INFERENCE_HOST}}` variables adapt each
-skill to your setup. Set them once per skill, then the instructions follow
-your topology.
+The `{{AGENT_HOST}}` and `{{INFERENCE_HOST}}` variables adapt each skill to your topology.
 
 ## Contributing
 
@@ -75,4 +73,4 @@ To contribute: fork this repo, add your skill, and open a PR.
 
 ---
 
-*Auto-synced and sanitized from production. Last updated: 2026-06-01 12:31 UTC*
+*Synced and sanitized from production. Last updated: 2026-06-01 12:37 UTC*
