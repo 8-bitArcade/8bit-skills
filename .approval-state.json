@@ -47,6 +47,78 @@
       "preview": "**---**\n\n---\nname: founder-journal-system\ndescription: Curated founder narrative intelligence system. Weekly journal generation from Obsidian vault, session logs, and operational data through a multi-stage editorial pipeline with human gates.\n---\n\n# Founder Journal System\n\nCurated founder narrative intellige",
       "timestamp": "2026-06-01T10:13:52.955651+00:00",
       "confirmed": false
+    },
+    {
+      "name": "audio-to-obsidian",
+      "preview": "**---**\n\n---\nname: audio-to-obsidian\ndescription: Transcribe audio files to Obsidian notes with summary, transcript, and action items\ntriggers:\n  - transcribe audio\n  - audio to note\n  - meeting recording\n  - voice memo\n  - audio transcription\n---\n\n# Audio to Obsidian Notes\n\nTranscribe audio files and create",
+      "timestamp": "2026-06-01T10:14:50.745640+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "pitch-deck-creation",
+      "preview": "**---**\n\n---\nname: pitch-deck-creation\ndescription: Create investor-facing pitch decks tailored to specific programs, accelerators, or investor audiences\ntriggers:\n  - pitch deck\n  - investor deck\n  - program application\n  - accelerator deck\n  - investor materials\n---\n\n# Pitch Deck Creation\n\nCreate investor-",
+      "timestamp": "2026-06-01T10:14:50.879498+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "automated-reporting",
+      "preview": "**---**\n\n---\nname: automated-reporting\ndescription: Generate automated reports, briefings, and status updates. Covers daily briefs, cron job reports, and scheduled summaries.\n---\n\n# Automated Reporting\n\nGenerate concise automated reports, briefings, and status updates for {{USER}}.\n\n## Trigger\n- Creating or ",
+      "timestamp": "2026-06-01T10:14:50.880247+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "founder-journal-system",
+      "preview": "**---**\n\n---\nname: founder-journal-system\ndescription: Curated founder narrative intelligence system. Weekly journal generation from Obsidian vault, session logs, and operational data through a multi-stage editorial pipeline with human gates.\n---\n\n# Founder Journal System\n\nCurated founder narrative intellige",
+      "timestamp": "2026-06-01T10:14:50.881648+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "audio-to-obsidian",
+      "preview": "**---**\n\n---\nname: audio-to-obsidian\ndescription: Transcribe audio files to Obsidian notes with summary, transcript, and action items\ntriggers:\n  - transcribe audio\n  - audio to note\n  - meeting recording\n  - voice memo\n  - audio transcription\n---\n\n# Audio to Obsidian Notes\n\nTranscribe audio files and create",
+      "timestamp": "2026-06-01T10:19:50.579791+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "pitch-deck-creation",
+      "preview": "**---**\n\n---\nname: pitch-deck-creation\ndescription: Create investor-facing pitch decks tailored to specific programs, accelerators, or investor audiences\ntriggers:\n  - pitch deck\n  - investor deck\n  - program application\n  - accelerator deck\n  - investor materials\n---\n\n# Pitch Deck Creation\n\nCreate investor-",
+      "timestamp": "2026-06-01T10:19:50.581672+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "automated-reporting",
+      "preview": "**---**\n\n---\nname: automated-reporting\ndescription: Generate automated reports, briefings, and status updates. Covers daily briefs, cron job reports, and scheduled summaries.\n---\n\n# Automated Reporting\n\nGenerate concise automated reports, briefings, and status updates for {{USER}}.\n\n## Trigger\n- Creating or ",
+      "timestamp": "2026-06-01T10:19:50.582671+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "founder-journal-system",
+      "preview": "**---**\n\n---\nname: founder-journal-system\ndescription: Curated founder narrative intelligence system. Weekly journal generation from Obsidian vault, session logs, and operational data through a multi-stage editorial pipeline with human gates.\n---\n\n# Founder Journal System\n\nCurated founder narrative intellige",
+      "timestamp": "2026-06-01T10:19:50.584210+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "audio-to-obsidian",
+      "preview": "**---**\n\n---\nname: audio-to-obsidian\ndescription: Transcribe audio files to Obsidian notes with summary, transcript, and action items\ntriggers:\n  - transcribe audio\n  - audio to note\n  - meeting recording\n  - voice memo\n  - audio transcription\n---\n\n# Audio to Obsidian Notes\n\nTranscribe audio files and create",
+      "timestamp": "2026-06-01T10:26:42.036275+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "pitch-deck-creation",
+      "preview": "**---**\n\n---\nname: pitch-deck-creation\ndescription: Create investor-facing pitch decks tailored to specific programs, accelerators, or investor audiences\ntriggers:\n  - pitch deck\n  - investor deck\n  - program application\n  - accelerator deck\n  - investor materials\n---\n\n# Pitch Deck Creation\n\nCreate investor-",
+      "timestamp": "2026-06-01T10:26:42.346189+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "automated-reporting",
+      "preview": "**---**\n\n---\nname: automated-reporting\ndescription: Generate automated reports, briefings, and status updates. Covers daily briefs, cron job reports, and scheduled summaries.\n---\n\n# Automated Reporting\n\nGenerate concise automated reports, briefings, and status updates for {{USER}}.\n\n## Trigger\n- Creating or ",
+      "timestamp": "2026-06-01T10:26:42.347311+00:00",
+      "confirmed": false
+    },
+    {
+      "name": "founder-journal-system",
+      "preview": "**---**\n\n---\nname: founder-journal-system\ndescription: Curated founder narrative intelligence system. Weekly journal generation from Obsidian vault, session logs, and operational data through a multi-stage editorial pipeline with human gates.\n---\n\n# Founder Journal System\n\nCurated founder narrative intellige",
+      "timestamp": "2026-06-01T10:26:42.348474+00:00",
+      "confirmed": false
     }
   ]
 }
