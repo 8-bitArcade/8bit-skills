@@ -134,10 +134,31 @@ When the system prompts a review of the skill library (meta-review):
 
 ## Publishing to Public Repo
 
+**Public repo**: `8-bitArcade/8bit-skills` on GitHub
 **License**: MIT (maximum adoption + attribution)
 **`.gitignore`**: Auto-included by sync script (excludes pycache, env, keys, OS files)
 **Architecture**: Personal repo as staging → manual fork to org via GitHub web UI
+**Note**: Hermes is sole agent — skills reference Hermes only, not Paperclip (removed June 2026)
 
+### Human-in-the-Loop Approval Workflow
+
+**CRITICAL**: No skill is pushed to the public repo without explicit double confirmation from {{USER}}.
+
+**Approval script**: `~/8Bit-Skills-Library/approval-state.py`
+**State file**: `~/8Bit-Skills-Library/.approval-state.json`
+**Denied skills**: `~/8Bit-Skills-Library/.denied-skills.json` (permanent block list)
+
+**Workflow:**
+1. Daily sync cron runs `sync-skills-repo.sh` → commits locally
+2. `approval-state.py check` compares local vs. public repo → finds new/changed skills
+3. Each skill sent to Telegram with **Approve** and **Deny** buttons
+4. **Approve** → second confirmation popup → skill marked as confirmed
+5. **Deny** → skill added to `.denied-skills.json` → never asked again
+6. After all approvals, `approval-state.py push` pushes confirmed skills to public repo
+
+**Denied skills are permanent** — once denied, never asked again. To re-enable, manually remove from `.denied-skills.json`.
+
+**Double confirmation required** — approving triggers a second confirmation popup. Both must be confirmed before push.
 ## Sanitization Pipeline
 
 All skills are sanitized before syncing to strip instance-specific/private data and replace with `{{VARIABLE}}` templates.
@@ -198,12 +219,41 @@ The sanitizer replaces not just private data but deployment-specific terms:
 
 This way, a user running everything on one machine sets `{{AGENT_HOST}}` = "my laptop" and the skill reads naturally, while a {{AGENT_HOST}}+workstation user sets `{{AGENT_HOST}}` = "my {{AGENT_HOST}}" and `{{INFERENCE_HOST}}` = "my desktop".
 
-### Publishing to Public Repo
+## Publishing to Public Repo
 
+**Public repo**: `8-bitArcade/8bit-skills` on GitHub
 **License**: MIT (maximum adoption + attribution)
 **`.gitignore`**: Auto-included by sync script (excludes pycache, env, keys, OS files)
-**Architecture**: Personal repo as staging → manual fork to org (`{{GITHUB_ORG}}/8bit-skills`) via GitHub web UI
+**Architecture**: Personal repo as staging → manual fork to org via GitHub web UI
 **Note**: Hermes is sole agent — skills reference Hermes only, not Paperclip (removed June 2026)
+
+### Human-in-the-Loop Approval Workflow
+
+**CRITICAL**: No skill is pushed to the public repo without explicit double confirmation from {{USER}}.
+
+**Approval script**: `~/8Bit-Skills-Library/approval-state.py`
+**State file**: `~/8Bit-Skills-Library/.approval-state.json`
+**Denied skills**: `~/8Bit-Skills-Library/.denied-skills.json` (permanent block list)
+
+**Workflow:**
+1. Daily sync cron runs `sync-skills-repo.sh` → commits locally
+2. `approval-state.py check` compares local vs. public repo → finds new/changed skills
+3. Each skill sent to Telegram with **Approve** and **Deny** buttons
+4. **Approve** → second confirmation popup → skill marked as confirmed
+5. **Deny** → skill added to `.denied-skills.json` → never asked again
+6. After all approvals, `approval-state.py push` pushes confirmed skills to public repo
+
+**Denied skills are permanent** — once denied, never asked again. To re-enable, manually remove from `.denied-skills.json`.
+
+**Double confirmation required** — approving triggers a second confirmation popup. Both must be confirmed before push.
+
+**Manual commands:**
+```bash
+python3 ~/8Bit-Skills-Library/approval-state.py check   # Find new/changed skills
+python3 ~/8Bit-Skills-Library/approval-state.py approve <name>  # Approve (requires 2nd confirmation)
+python3 ~/8Bit-Skills-Library/approval-state.py deny <name>    # Deny (permanent)
+python3 ~/8Bit-Skills-Library/approval-state.py push            # Push confirmed skills
+```
 
 ## Pitfalls
 
@@ -215,6 +265,7 @@ This way, a user running everything on one machine sets `{{AGENT_HOST}}` = "my l
 - **GitHub org transfer requires web UI** — `gh api repos/{owner}/{repo}/transfer -f new_owner=Org` returns HTTP 422 when the authenticated user lacks org create-repo permission. `gh repo fork OWNER/REPO --org OrgName` returns HTTP 403 for the same reason. Both fail from {{AGENT_HOST}} SSH tokens. **Workaround**: owner must go to repo page → Fork button → select target org, OR repo Settings → Danger Zone → Transfer ownership on github.com. No CLI/API workaround exists for tokens without org admin rights.
 - **Personal repo as staging, org fork as public** — the recommended architecture: develop and sanitize in the personal repo (`{{GITHUB_USER}}/8Bit-Skills-Library`), then **fork** to the org (`{{GITHUB_ORG}}/8bit-skills` or similar) for public-facing distribution. The sync script auto-syncs to the personal repo (after human approval); the org fork is a manual one-time action via GitHub web UI.
 - **No auto-push** — the sync script (v3+) commits locally but does NOT push to any remote. Human must review diff and approve with "push 8bit skills". This prevents unsanitized or broken skills from reaching the repo.
+- **Approval workflow requires double confirmation** — each skill needs explicit approval AND a second confirmation before pushing. Denied skills are blocked permanently in `.denied-skills.json`.
 - **Moving a repo from personal to org after creation** — plan ahead: if the repo should live in the org, either (a) have an org owner create it empty first, then push, or (b) use the web UI fork/transfer.
 - **Don't store secrets** in skill files. The repo should be shareable. Use `{{TEMPLATE}}` placeholders for all instance-specific values.
 - **`author: {{USER}}` in SKILL.md frontmatter** — the sanitizer replaces this with `{{AUTHOR}}`. If you see `author: {{USER}}` in a repo skill file, it means the sanitizer missed it (it was added after the last sanitize run).
