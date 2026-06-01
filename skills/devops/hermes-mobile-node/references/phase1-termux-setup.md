@@ -5,7 +5,7 @@ Phone-side setup steps. Run in order.
 ## Prerequisites
 
 - {{MOBILE_DEVICE}} (Snapdragon 8 Elite, 24GB RAM, 1TB)
-- AIOS (Android 15) stock ROM
+- {{MOBILE_OS}} stock ROM
 - Stable WiFi connection
 
 ## Step-by-Step
@@ -53,11 +53,11 @@ cat ~/.ssh/id_ed25519.pub
 
 Add the public key to VPS `~/.ssh/authorized_keys` for secure model file transfer.
 
-### 6. {{VPN_TOOL}}
+### 6. {{MESH_VPN}}
 
-Install the {{VPN_TOOL}} Android app from Play Store or F-Droid. Log in to Russell's tailnet.
+Install the {{MESH_VPN}} Android app from Play Store or F-Droid. Log in to {{USER}}'s tailnet.
 
-Verify from VPS: `{{VPN_CMD}} status --json` should show the phone by hostname.
+Verify from VPS: `{{MESH_VPN_CMD}} status --json` should show the phone by hostname.
 
 ### 7. Model Storage
 

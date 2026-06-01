@@ -12,7 +12,7 @@ Hermes provider configuration, fallback chains, and common gotchas.
 ## Quick Checklist
 
 1. Top-level `model.api_key` does NOT cascade into provider-specific blocks — each provider needs its own `api_key` in its section
-2. `.env` keys must be uncommented — `# {{OR_API_KEY_VAR}}=*** is silently ignored
+2. `.env` keys must be uncommented — `# {{OR_API_KEY}}=*** is silently ignored
 3. Verify key propagation: `grep 'api_key' ~/.hermes/config.yaml` — provider blocks should show the key, not `''`
 4. Test provider directly: `hermes -z "Say hello" --provider <name> -m "<model>"`
 5. Check for hidden blockers: `min_coding_score`, privacy/guardrail settings, commented env vars
@@ -49,7 +49,7 @@ openrouter:
 grep -A5 '^openrouter:' ~/.hermes/config.yaml
 
 # 2. Check .env key is active
-grep '{{OR_API_KEY_VAR}}' ~/.hermes/.env | grep -v '^#'
+grep '{{OR_API_KEY}}' ~/.hermes/.env | grep -v '^#'
 
 # 3. Test directly with curl
 KEY=$(grep -o 'sk-or-[^ ]*' ~/.hermes/config.yaml | head -1)

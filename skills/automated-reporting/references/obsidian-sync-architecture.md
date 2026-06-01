@@ -4,8 +4,8 @@
 
 | Job ID | Name | Schedule | Model | Delivery |
 |--------|------|----------|-------|----------|
-| `{{CRON_ID_5}}` | Daily Brief for Russell | 0 8 * * * | {{MODEL_FAST}} | Telegram + origin |
-| `{{CRON_ID_1}}` | Daily Session Summary to Obsidian | 0 8 * * * | qwen3.6-27b | local (vault) |
+| `{{CRON_ID_DAILY_BRIEF}}` | Daily Brief for {{USER}} | 0 8 * * * | {{MODEL_FAST}} | Telegram + origin |
+| `{{CRON_ID_SESSION_SUMMARY}}` | Daily Session Summary to Obsidian | 0 8 * * * | qwen3.6-27b | local (vault) |
 | `5a29c1960f66` | Session Summary Vault Sync Watcher | every 30m | script-only | local |
 
 ## Sync Flow

@@ -2,7 +2,7 @@
 name: skill-template
 description: "Canonical SKILL.md scaffold for new skills in the 8Bit Skills Library"
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 

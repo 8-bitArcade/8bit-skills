@@ -2,7 +2,7 @@
 name: hermes-model-catalog-troubleshooting
 description: "Troubleshoot {{LMS}} model catalog issues in Hermes — dropdown not showing models, YAML errors, gateway caching."
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 

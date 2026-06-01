@@ -2,7 +2,7 @@
 name: hermes-context-optimization
 description: "Diagnose and reduce Hermes agent context window pressure — config tuning, memory pruning, skill management."
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 

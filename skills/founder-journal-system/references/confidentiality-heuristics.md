@@ -36,7 +36,7 @@ Exclude content containing:
 - Internal infrastructure passwords or secrets
 
 ## Contextual Exceptions
-Allowed when explicitly approved by Russell:
+Allowed when explicitly approved by {{USER}}:
 - Public company metrics (revenue ranges, user counts already published)
 - Previously disclosed technical architecture
 - Open-source project details

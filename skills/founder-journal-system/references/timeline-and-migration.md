@@ -6,13 +6,13 @@
 - **Later 2023/2024:** LeChat (Mistral) and Grok (X) arrive
 - **Mid-2025:** Cloud orchestration tools (n8n, Make.com, CrewAI) tried to bridge the gap
 - **January 2026:** Decision to migrate entirely to local AI
-- **April 2026:** {{ASSISTANT_NAME}} + Paperclip deployment
+- **April 2026:** {{PERSONAL_ASSISTANT}} + Paperclip deployment
 - **May 2026:** Hermes adoption
 
 ## Early AI Adoption Story
 - Started as a way to unblock myself
 - Used for: research new tech, brainstorm product ideas, draft work-related text
-- Russell has "absolutely loathed the need for long-form writing" his entire life — AI finally gave him a tool that could alleviate the pain of spending hours composing text
+- {{USER}} has "absolutely loathed the need for long-form writing" his entire life — AI finally gave him a tool that could alleviate the pain of spending hours composing text
 - Quickly stopped being a novelty and became a **daily utility tool**
 
 ## Memory/RAG Evolution
@@ -29,8 +29,8 @@
 - Frontier Labs had no financial incentive to give users control
 
 ## Local Harness Journey
-1. **{{FRAMEWORK_NAME}}:** Open source, good for learning, but drifted after founder joined OpenAI
-2. **{{ASSISTANT_NAME}}:** Streamlined but manual (skills, memory, file access all coded from scratch)
+1. **{{AI_FRAMEWORK}}:** Open source, good for learning, but drifted after founder joined OpenAI
+2. **{{PERSONAL_ASSISTANT}}:** Streamlined but manual (skills, memory, file access all coded from scratch)
    - Paperclip deployed here
    - Hit `llama.cpp`/Ollama friction (Qwen 27B choked, 2 min/response)
    - Learned tools built for one ecosystem won't run openweight models seamlessly

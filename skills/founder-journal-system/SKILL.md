@@ -19,7 +19,7 @@ This system produces **selective synthesis** not passive summarization. The goal
 ## Pipeline Architecture (2 Gates)
 
 ```
-[INPUT: Russell provides topic(s)]
+[INPUT: {{USER}} provides topic(s)]
         ↓
 Stage 1: Research & Draft → Auto (research, draft, revise, media)
         ↓
@@ -29,13 +29,13 @@ Stage 3: Publish → [GATE: Human confirms publish]
 ```
 
 ### Topic Input
-Russell provides topics via Telegram/Discord message. Format:
+{{USER}} provides topics via Telegram/Discord message. Format:
 - Single topic: "Write about X"
 - Multiple topics: "Topics: 1) X 2) Y 3) Z"
 - The agent researches approved data sources for context, then drafts.
 
 ### Redraft Workflow
-When Russell asks to "retry" or "redraft" a previous post with updated voice:
+When {{USER}} asks to "retry" or "redraft" a previous post with updated voice:
 1. Search session history for the original draft/topic
 2. Re-generate using current voice anchors (they may have changed)
 3. Do NOT just tweak the old draft — regenerate from scratch with updated voice
@@ -65,7 +65,7 @@ When Russell asks to "retry" or "redraft" a previous post with updated voice:
 
 ### Approved Read Sources
 - Obsidian vault (approved folders only)
-  - `Atlas/` — IDENTITY.md, SOUL.md, me.md (Russell's values, decision framework, identity)
+  - `Atlas/` — IDENTITY.md, SOUL.md, me.md ({{USER}}'s values, decision framework, identity)
   - `Efforts/Transcript/` — Audio diary transcripts (date-stamped, rich raw material for topics)
   - `Efforts/Brainstorming/`, `Efforts/Research/`, `Efforts/Diary/` — Ideas, notes, reflections
   - `AI OS/` — 8Bit product/tech context
@@ -135,8 +135,8 @@ Note: Empty `topics` array means no posts published yet — proceed normally, do
 
 ## Narrative Construction Rules (Hard)
 
-- **Strict Chronology:** Always maintain a strict chronological timeline. Do not jump ahead in time. Cover cloud tools and orchestration (n8n, Make.com, CrewAI) *before* discussing local migration or local harnesses ({{FRAMEWORK_NAME}}, {{ASSISTANT_NAME}}, Hermes).
-- **AI as Utility First:** Frame early AI adoption as a practical utility tool for research, brainstorming, and drafting. Russell has "absolutely loathed the need for long-form writing" his entire life — AI alleviated the pain of spending hours putting thoughts into text. Set the scene of *how* it was used daily. Do NOT reference dyslexia in every post; it was covered in #001 and is now established.
+- **Strict Chronology:** Always maintain a strict chronological timeline. Do not jump ahead in time. Cover cloud tools and orchestration (n8n, Make.com, CrewAI) *before* discussing local migration or local harnesses ({{AI_FRAMEWORK}}, {{PERSONAL_ASSISTANT}}, Hermes).
+- **AI as Utility First:** Frame early AI adoption as a practical utility tool for research, brainstorming, and drafting. {{USER}} has "absolutely loathed the need for long-form writing" his entire life — AI alleviated the pain of spending hours putting thoughts into text. Set the scene of *how* it was used daily. Do NOT reference dyslexia in every post; it was covered in #001 and is now established.
 - **Memory/RAG Evolution:** Acknowledge that while early cloud models lacked memory, the eventual addition of memory and RAG facilities was a huge step toward a personalized experience ("Finally, I had a personalized experience where the AI knew something about me from session to session"), even if it ultimately wasn't enough to solve privacy/control concerns.
 - **Model Timeline Reference:** ChatGPT (Late 2022) -> Claude/Gemini (Early 2023) -> LeChat/Grok (Later) -> Orchestration (Mid-2025) -> Local Migration Decision (January 2026) -> Local Harnesses (April/May 2026).
 **Model Timeline Reference:** ChatGPT (Late 2022) -> Claude/Gemini (Early 2023) -> LeChat/Grok (Later) -> Orchestration (Mid-2025) -> Local Migration Decision (Spring 2026) -> Local Harnesses (April/May 2026).
@@ -158,7 +158,7 @@ Compress large volumes of operational activity into:
 
 ## Stage 1: Research & Draft (Auto)
 
-**Input:** Russell provides topic(s) via Telegram/Discord.
+**Input:** {{USER}} provides topic(s) via Telegram/Discord.
 
 **Process:**
 
@@ -166,22 +166,22 @@ Compress large volumes of operational activity into:
 - Scan approved data sources for context related to the given topic
 - Retrieve related discussions, technical notes, session logs
 - Identify supporting evidence and personal experiences
-- Build narrative framing from Russell's actual work, not generic content
+- Build narrative framing from {{USER}}'s actual work, not generic content
 
 ### 1b. Draft Generation
 - Generate core narrative (platform-agnostic)
 - Include hooks (first 2 lines must grab attention)
 - Target length: 100-200 words for LinkedIn (shorter is better)
-- **CRITICAL:** Write in Russell's voice (see voice anchors). Short sentences. Direct. Opinionated. No corporate speak. No hedging. No filler.
+- **CRITICAL:** Write in {{USER}}'s voice (see voice anchors). Short sentences. Direct. Opinionated. No corporate speak. No hedging. No filler.
 
 ### 1c. Revision Pass
 Self-review for:
 - Tone alignment with voice anchors (compare against anchors, not generic "professional" writing)
-- **Natural flow check:** Read aloud. Does it sound like Russell speaking, or does it sound robotic/polished? If robotic, rewrite with shorter, more direct sentences.
+- **Natural flow check:** Read aloud. Does it sound like {{USER}} speaking, or does it sound robotic/polished? If robotic, rewrite with shorter, more direct sentences.
 - Factual accuracy
 - Pacing and clarity
 - Technical depth
-- **Tone check:** Read aloud. Does it sound like Russell wrote it? If not, rewrite.
+- **Tone check:** Read aloud. Does it sound like {{USER}} wrote it? If not, rewrite.
 
 ## Stage 2: Final Editorial
 
@@ -193,7 +193,7 @@ Self-review for:
 - Duplication check against published-topics.json
 - Quality scoring (1-10 scale, must be ≥7 to proceed)
 
-**Gate:** Deliver draft + quality score to Russell. Wait for explicit approval.
+**Gate:** Deliver draft + quality score to {{USER}}. Wait for explicit approval.
 
 ### 2a. Media Suggestions
 - Generate pixelated GIF signature for each post using `scripts/generate_post_gif.py`
@@ -225,9 +225,9 @@ Only after explicit human authorization.
 
 ## Tone & Voice
 
-**Voice anchor examples** stored in `references/voice-anchors.md` — seed with 5-10 of Russell's best past posts.
+**Voice anchor examples** stored in `references/voice-anchors.md` — seed with 5-10 of {{USER}}'s best past posts.
 
-**Founder context:** Russell is an introvert who never enjoyed posting. Straight-shooting, literal, struggles with long text. Lots of thoughts, kept to himself. Learning that telling your story matters as a founder. Content is his way of sharing real thoughts without small talk.
+**Founder context:** {{USER}} is an introvert who never enjoyed posting. Straight-shooting, literal, struggles with long text. Lots of thoughts, kept to himself. Learning that telling your story matters as a founder. Content is his way of sharing real thoughts without small talk.
 
 **8Bit context:** 8Bit is first and foremost a gaming ecosystem for indie games. We build with agentic services in mind that make sense for our customers and ourselves.
 
@@ -290,10 +290,10 @@ Each platform serves a distinct purpose. Content is adapted, not duplicated:
 
 **NOTE:** Meta long-lived token expired (user logged out of Facebook). Regenerate via Graph API Explorer before next post.
 
-**IMPORTANT: `x_search` tool ≠ Twitter posting.** The `x_search` tool uses xAI/Grok API credentials (`{{XAI_KEY_VAR}}`), NOT Twitter API v2 credentials. It searches X content but cannot post tweets with Twitter App keys.
+**IMPORTANT: `x_search` tool ≠ Twitter posting.** The `x_search` tool uses xAI/Grok API credentials (`{{XAI_API_KEY}}`), NOT Twitter API v2 credentials. It searches X content but cannot post tweets with Twitter App keys.
 
 **Posting path: Twitter API v2** (chosen by user)
-- Requires all 4 creds: `{{TW_API_KEY_VAR}}`, `{{TW_API_SECRET_VAR}}`, `{{TW_ACCESS_TOKEN_VAR}}`, `{{TW_ACCESS_SECRET_VAR}}`
+- Requires all 4 creds: `{{TW_API_KEY}}`, `{{TW_API_SECRET}}`, `{{TW_ACCESS_TOKEN}}`, `{{TW_ACCESS_SECRET}}`
 - Authentication: OAuth1 (NOT bearer token). Use `requests_oauthlib.OAuth1`.
 - Needs custom posting script — Hermes has no built-in Twitter post tool.
 - **Prerequisite:** Keys must be attached to a Project in X Developer Portal → Projects & Apps. Without this, API returns 403 with `client_id: "30620018"` error.
@@ -319,7 +319,7 @@ Each platform serves a distinct purpose. Content is adapted, not duplicated:
 
 **Status:** ✅ ACTIVE — Instagram posting works, auto-cross-posts to Facebook Page. Script: `~/.hermes/scripts/post-instagram.py`
 
-**Setup:** Complete. Instagram Business account (`{{IG_HANDLE}}`) linked to Facebook Page (8Bit). Long-lived token stored in `.env`.
+**Setup:** Complete. Instagram Business account (`{{SOCIAL_HANDLE}}`) linked to Facebook Page (8Bit). Long-lived token stored in `.env`.
 
 **Posting workflow:**
 1. Generate post content (image URL required)
@@ -328,7 +328,7 @@ Each platform serves a distinct purpose. Content is adapted, not duplicated:
 
 **Meta API notes:**
 - `pages_manage_posts` permission blocked (requires App Review) — using Instagram cross-posting workaround
-- Token stored as `{{META_TOKEN_VAR}}` in `.env`
+- Token stored as `{{META_TOKEN_KEY}}` in `.env`
 - Token expires ~6 months; regenerate via Graph API Explorer
 - See `social-media-publishing/references/meta-token-regen.md` for token refresh steps
 

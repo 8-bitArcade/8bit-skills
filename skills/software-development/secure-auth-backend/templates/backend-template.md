@@ -41,7 +41,7 @@ module.exports = {
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'change-me',
   jwtExpiry: '1h',
   jwtRefreshExpiry: '7d',
-  authorizedEmails: (process.env.{{AUTH_EMAILS_VAR}} || 'admin@example.com').split(','),
+  authorizedEmails: (process.env.{{AUTH_EMAILS_KEY}} || 'admin@example.com').split(','),
   rpName: 'App Name',
   rpID: process.env.RP_ID || 'localhost',
   dbPath: process.env.DB_PATH || './data/dataroom.sqlite',
@@ -53,7 +53,7 @@ module.exports = {
 PORT=3001
 JWT_SECRET=<strong-random-string>
 JWT_REFRESH_SECRET=<strong-random-string>
-{{AUTH_EMAILS_VAR}}=admin@example.com,investor@firm.com
+{{AUTH_EMAILS_KEY}}=admin@example.com,investor@firm.com
 RP_ID=your-domain.com
 DB_PATH=./data/app.sqlite
 ```

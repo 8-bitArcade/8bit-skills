@@ -1,9 +1,11 @@
 # 8Bit Skills Library
 
-Production-ready agent skills for AI agent platforms (Hermes, OpenClaw, etc.).
+Production-ready, platform-agnostic agent skills for AI agent platforms.
 
-Each skill is self-contained — copy it into your skills directory and customize
-the `{{VARIABLE}}` template values for your setup.
+Each skill is a self-contained template — copy it into your `~/.hermes/skills/`
+directory and customize the `{{VARIABLE}}` placeholders for your setup.
+
+Works on: local machine, VPS, cloud VM, or hybrid multi-device.
 
 ## Available Skills
 
@@ -28,38 +30,57 @@ the `{{VARIABLE}}` template values for your setup.
 
 ## Quick Start
 
-1. Browse the `skills/` directory
-2. Copy any skill folder into your `~/.hermes/skills/` directory
-3. Search for `{{` in the skill files to find template variables
-4. Replace each `{{VARIABLE}}` with your actual value
-5. Skills auto-load when relevant triggers are detected
+1. Browse `skills/` and pick what you need
+2. Copy the skill folder into your `~/.hermes/skills/`
+3. Search for `{{` to find template variables
+4. Replace each `{{VARIABLE}}` with your actual setup values
+5. Skills auto-load when their trigger conditions match
 
-## Template Variables
+## Platform Variables
 
-Skills use `{{VARIABLE}}` placeholders for instance-specific values:
+Every skill uses the same template variables so you consistently describe
+your setup once and all skills adapt:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `{{WORKSTATION_IP}}` | Your workstation/local AI server IP | `192.168.1.100` |
-| `{{VPS_IP}}` | Your VPS/server IP | `203.0.113.50` |
-| `{{LMS_HOST}}` | LLM server host:port | `192.168.1.100:1234` |
-| `{{LMS}}` | LLM server name | LM Studio |
-| `{{MODEL}}` / `{{MODEL_LARGE}}` | Primary model name | `qwen/qwen3.6-27b` |
-| `{{VAULT_MOUNT}}` | Obsidian vault mount path | `~/.obsidian_vault` |
-| `{{HERMES_HOME}}` | Hermes agent home | `~/.hermes` |
-| `{{ENV_PATH}}` | Environment file path | `~/.hermes/.env` |
-| `{{USER}}` | Server username | `russell` |
-| `{{WINDOWS_USER}}` | Windows machine username | `youruser` |
-| `{{GPU_MODEL}}` | GPU model for inference | RTX 3090 |
+| Variable | What It Means | Examples |
+|----------|---------------|----------|
+| `{{AGENT_HOST_IP}}` | Where the agent runs (VPS, local, cloud) | `192.168.1.10`, `10.0.0.1` |
+| `{{INFERENCE_HOST_IP}}` | Where GPU/LLM inference runs | `192.168.1.100`, `localhost` |
+| `{{DESKTOP_HOST}}` | Your desktop/laptop machine | `my-pc`, `macbook-pro` |
+| `{{LMS_HOST}}` | LLM server (LM Studio, vLLM, etc.) | `192.168.1.100:1234` |
+| `{{LMS}}` | LLM server software name | `LM Studio`, `Ollama`, `vLLM` |
+| `{{MODEL_LARGE}}` | Primary/complex model | `qwen/qwen3.6-27b` |
+| `{{MODEL_FAST}}` | Fast/cheap model | `nemotron-nano-4b` |
+| `{{VAULT_PATH}}` | Obsidian vault location | `~/.obsidian_vault`, `~/Documents/Vault` |
+| `{{MESH_VPN}}` | VPN/mesh networking | `Tailscale`, `ZeroTier` |
+| `{{GPU_MODEL}}` | GPU for inference | `RTX 3090`, `M4 Max` |
 | `{{DOMAIN}}` | Your domain | `example.com` |
-| `{{GITHUB_USER}}` | GitHub username | `yourname` |
+| `{{HERMES_HOME}}` | Agent home directory | `~/.hermes` |
+| `{{BACKEND_PORT}}` | API/backend port | `3001`, `8080` |
+| `{{GITHUB_USER}}` | Your GitHub username | `yourname` |
+| `{{GITHUB_ORG}}` | Your GitHub organization | `yourorg` |
+| `{{USER}}` | System username | `youruser` |
+| `{{ADMIN_EMAIL}}` | Admin email | `admin@example.com` |
+| `{{WHISPER_MODEL}}` | Transcription model | `large-v3-turbo` |
 
-Each skill's SKILL.md lists the specific variables it uses.
+Each skill's SKILL.md notes which variables it uses.
+
+## Architecture Skills Support
+
+Skills are topology-agnostic. Whether you run:
+- **Single machine**: agent + inference on one box
+- **VPS + workstation**: agent on VPS, inference on local GPU
+- **Cloud VM**: everything on a cloud instance
+- **Hybrid multi-device**: failover between devices
+
+The `{{AGENT_HOST}}` and `{{INFERENCE_HOST}}` variables adapt each
+skill to your setup. Set them once per skill, then the instructions follow
+your topology.
 
 ## Contributing
 
-To propose a new skill, open a PR with the skill directory.
+Skills are synced from production workflows and sanitized to remove private data.
+To contribute: fork this repo, add your skill, and open a PR.
 
 ---
 
-*Auto-synced from production. Last updated: 2026-06-01 07:17 UTC*
+*Auto-synced and sanitized from production. Last updated: 2026-06-01 07:41 UTC*

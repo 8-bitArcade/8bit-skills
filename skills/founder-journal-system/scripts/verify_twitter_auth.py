@@ -14,7 +14,7 @@ def main():
                 k, v = line.split("=", 1)
                 env[k] = v.strip('"')
     
-    required = ["{{TW_API_KEY_VAR}}", "{{TW_API_SECRET_VAR}}", "{{TW_ACCESS_TOKEN_VAR}}", "{{TW_ACCESS_SECRET_VAR}}"]
+    required = ["{{TW_API_KEY}}", "{{TW_API_SECRET}}", "{{TW_ACCESS_TOKEN}}", "{{TW_ACCESS_SECRET}}"]
     missing = [k for k in required if k not in env]
     
     if missing:
@@ -28,10 +28,10 @@ def main():
         import requests
         
         auth = OAuth1(
-            env["{{TW_API_KEY_VAR}}"],
-            client_secret=env["{{TW_API_SECRET_VAR}}"],
-            resource_owner_key=env["{{TW_ACCESS_TOKEN_VAR}}"],
-            resource_owner_secret=env["{{TW_ACCESS_SECRET_VAR}}"]
+            env["{{TW_API_KEY}}"],
+            client_secret=env["{{TW_API_SECRET}}"],
+            resource_owner_key=env["{{TW_ACCESS_TOKEN}}"],
+            resource_owner_secret=env["{{TW_ACCESS_SECRET}}"]
         )
         
         r = requests.get("https://api.x.com/2/users/me", auth=auth)

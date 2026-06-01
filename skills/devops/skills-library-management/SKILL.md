@@ -2,7 +2,7 @@
 name: skills-library-management
 description: "Manage and sync agent skills to the 8Bit Skills Library — a GitHub repo of production-ready, platform-grade skills for 8bit-ai.com. Covers skill creation, library sync, bundling filters, and library structure."
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 
@@ -22,7 +22,7 @@ Manage the 8Bit Skills Library — a curated collection of production-ready agen
 
 **Repo**: `{{GITHUB_USER}}/8Bit-Skills-Library` (private on GitHub)
 **Auto-sync**: Daily at 08:00 CEST via Hermes cron
-**Sync script**: `{{SKILLS_LIBRARY_DIR}}/sync-skills-repo.sh`
+**Sync script**: `{{SKILLS_LIBRARY_REPO}}/sync-skills-repo.sh`
 
 Skills are synced from `~/.hermes/skills/` to the repo, excluding bundled Hermes skills (filtered via `.bundled_manifest`).
 
@@ -87,7 +87,7 @@ See `templates/skill-template.md` for the canonical scaffold.
 
 4. Run the sync script manually:
    ```bash
-   bash {{SKILLS_LIBRARY_DIR}}/sync-skills-repo.sh
+   bash {{SKILLS_LIBRARY_REPO}}/sync-skills-repo.sh
    ```
 
 5. Verify on GitHub
@@ -95,7 +95,7 @@ See `templates/skill-template.md` for the canonical scaffold.
 ## Running the Sync Manually
 
 ```bash
-cd {{SKILLS_LIBRARY_DIR}}
+cd {{SKILLS_LIBRARY_REPO}}
 bash sync-skills-repo.sh
 ```
 

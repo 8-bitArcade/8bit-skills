@@ -27,7 +27,7 @@
    &client_secret=APP_SECRET
    &fb_exchange_token=USER_TOKEN
    ```
-7. Update `{{META_TOKEN_VAR}}` in `~/.hermes/.env`
+7. Update `{{META_TOKEN_KEY}}` in `~/.hermes/.env`
 
 ## Debug Token
 

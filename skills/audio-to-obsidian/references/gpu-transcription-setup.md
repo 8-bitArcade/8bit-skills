@@ -1,12 +1,12 @@
 # GPU Transcription Setup
 
 ## Overview
-Audio transcription runs on Windows {{GPU_MODEL}} ({{WORKSTATION_IP}}) via SSH. Uses `{{WHISPER_MODEL}}` model (~1.5GB) for best quality. Falls back to VPS CPU `tiny` model if GPU unavailable.
+Audio transcription runs on Windows {{GPU_MODEL}} ({{INFERENCE_HOST_IP}}) via SSH. Uses `{{WHISPER_MODEL}}` model (~1.5GB) for best quality. Falls back to VPS CPU `tiny` model if GPU unavailable.
 
 ## Prerequisites
 - `openai-whisper` + CUDA/PyTorch installed on Windows
 - **ffmpeg installed on Windows** (mandatory — see Pitfalls below)
-- SSH access to `{{WINDOWS_USER}}@{{WORKSTATION_IP}}`
+- SSH access to `{{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}`
 
 ## How It Works
 1. `transcribe-single.py` / `batch-transcribe.py` SCP audio to `{{WINDOWS_TEMP}}\whisper_work\`
@@ -17,7 +17,7 @@ Audio transcription runs on Windows {{GPU_MODEL}} ({{WORKSTATION_IP}}) via SSH. 
 
 ## SSH Command Pattern
 ```powershell
-ssh {{WINDOWS_USER}}@{{WORKSTATION_IP}} '$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User"); cd {{WINDOWS_TEMP}}\whisper_work; python run_whisper.py {{WHISPER_MODEL}} input.m4a output.json'
+ssh {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}} '$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User"); cd {{WINDOWS_TEMP}}\whisper_work; python run_whisper.py {{WHISPER_MODEL}} input.m4a output.json'
 ```
 - Must set PATH manually in SSH session (winget installs don't persist in SSH env)
 - Use single quotes for the entire command string (PowerShell)

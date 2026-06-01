@@ -59,12 +59,12 @@ M...n### Posting Endpoints
 - API v2 requires app attached to a **Project** (created in Developer Portal)
 - Tokens generated before project linking **won't work** — must regenerate
 - Error `client_id: "30620018"` = app not recognized by project system
-- Needs all 4 creds: `{{TW_API_KEY_VAR}}`, `{{TW_API_SECRET_VAR}}`, `{{TW_ACCESS_TOKEN_VAR}}`, `{{TW_ACCESS_SECRET_VAR}}`
+- Needs all 4 creds: `{{TW_API_KEY}}`, `{{TW_API_SECRET}}`, `{{TW_ACCESS_TOKEN}}`, `{{TW_ACCESS_SECRET}}`
 
 ### Credential Storage
 
 ```
-{{TW_API_KEY_VAR}}=...
+{{TW_API_KEY}}=...
 T...n### Auth Pattern
 
 Use OAuth 1.0a:

@@ -2,7 +2,7 @@
 name: hermes-provider-config
 description: "Configure and troubleshoot Hermes LLM providers — {{LMS}}, OpenRouter fallback, API keys, privacy settings, and gateway caching."
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 
@@ -26,7 +26,7 @@ license: MIT
    hermes config set model.api_key "sk-or-..."
    
    # .env file — MUST be uncommented
-   # Check: grep '{{OR_API_KEY_VAR}}' ~/.hermes/.env
+   # Check: grep '{{OR_API_KEY}}' ~/.hermes/.env
    # If commented out with '#', uncomment it
    ```
 
@@ -59,7 +59,7 @@ license: MIT
 
 ### Known Pitfalls
 
-- **`.env` key commented out** — `# {{OR_API_KEY_VAR}}=...` is inert. Must be uncommented.
+- **`.env` key commented out** — `# {{OR_API_KEY}}=...` is inert. Must be uncommented.
 - **`min_coding_score` filters free models** — default 0.65 blocks most free tiers. Set to 0.
 - **OpenRouter privacy guardrails** — 404 "No endpoints matching guardrail restrictions" means your account's data policy blocks the model. Fix at https://openrouter.ai/settings/privacy (lower privacy level).
 - **Top-level key doesn't propagate** — `model.api_key` does NOT automatically populate `openrouter.api_key`. Set both.

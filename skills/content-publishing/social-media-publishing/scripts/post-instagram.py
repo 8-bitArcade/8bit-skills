@@ -6,7 +6,7 @@ import sys
 import os
 import time
 
-def load_env(path='{{ENV_PATH}}'):
+def load_env(path='{{HERMES_ENV_PATH}}'):
     env = {}
     with open(path) as f:
         for line in f:
@@ -17,11 +17,11 @@ def load_env(path='{{ENV_PATH}}'):
     return env
 
 def post_instagram(caption, image_url, env):
-    token = env.get('{{META_TOKEN_VAR}}')
+    token = env.get('{{META_TOKEN_KEY}}')
     ig_id = '17841454976282357'
     
     if not token:
-        print('❌ {{META_TOKEN_VAR}} not found in .env')
+        print('❌ {{META_TOKEN_KEY}} not found in .env')
         sys.exit(1)
     
     # 1. Create media container

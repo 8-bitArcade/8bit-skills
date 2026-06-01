@@ -15,7 +15,7 @@ Two remotes configured:
 ## Working Solution: SSHFS Mount
 Mount Windows GDrive sync folder directly via SSHFS:
 ```bash
-sshfs {{WINDOWS_USER}}@{{WORKSTATION_IP}}:"G:/My Drive/URecorder" ~/urecorder -o allow_other,reconnect,_netdev
+{{REMOTE_MOUNT_TOOL}} {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"G:/My Drive/URecorder" ~/urecorder -o allow_other,reconnect,_netdev
 ```
 
 ## Mount Details

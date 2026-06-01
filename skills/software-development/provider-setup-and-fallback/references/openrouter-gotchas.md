@@ -15,13 +15,13 @@ hermes config set openrouter.api_key "sk-or-..."
 
 ### Issue 2: `.env` Key Commented Out
 
-**Symptom:** `{{OR_API_KEY_VAR}}` appears in `.env` but is commented out.
+**Symptom:** `{{OR_API_KEY}}` appears in `.env` but is commented out.
 
-**Root cause:** Default `.env` template has `# {{OR_API_KEY_VAR}}=*** — the `#` prefix prevents loading.
+**Root cause:** Default `.env` template has `# {{OR_API_KEY}}=*** — the `#` prefix prevents loading.
 
 **Fix:** Remove the `#` prefix:
 ```bash
-sed -i 's/^# {{OR_API_KEY_VAR}}=/{{OR_API_KEY_VAR}}=/' ~/.hermes/.env
+sed -i 's/^# {{OR_API_KEY}}=/{{OR_API_KEY}}=/' ~/.hermes/.env
 ```
 
 ### Issue 3: OpenRouter Privacy/Guardrail Settings Block Free Models
@@ -52,7 +52,7 @@ hermes config set openrouter.min_coding_score 0
 grep -A5 '^openrouter:' ~/.hermes/config.yaml
 
 # Check .env key is active (no # prefix)
-grep '{{OR_API_KEY_VAR}}' ~/.hermes/.env | grep -v '^#'
+grep '{{OR_API_KEY}}' ~/.hermes/.env | grep -v '^#'
 
 # Test directly with curl
 KEY=$(grep -o 'sk-or-[^ ]*' ~/.hermes/config.yaml | head -1)

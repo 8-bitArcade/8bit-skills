@@ -16,7 +16,7 @@ Transcribe audio files and create formatted Obsidian notes.
 ## Prerequisites
 - `openai-whisper` installed in Hermes venv
 - Obsidian vault mounted at `~/.obsidian_vault/`
-- Windows machine ({{WORKSTATION_IP}}) has `openai-whisper` + CUDA/PyTorch + **ffmpeg** for GPU transcription
+- Windows machine ({{INFERENCE_HOST_IP}}) has `openai-whisper` + CUDA/PyTorch + **ffmpeg** for GPU transcription
 - **ffmpeg on Windows is mandatory**: Whisper uses ffmpeg internally to decode audio. Without it, `whisper.transcribe()` crashes with `FileNotFoundError`. Install via `winget install --id Gyan.FFmpeg --accept-source-agreements --accept-package-agreements`. After install, restart the SSH session so PATH updates take effect.
 
 ## Workflow
@@ -74,7 +74,7 @@ python3 ~/.hermes/skills/audio-to-obsidian/scripts/verify-whisper.py
 ## Audio Source Options
 - Telegram/Discord upload (saved to cache)
 - Local files in vault/home directory
-- **URecorder via SSHFS**: Mounted at `~/urecorder/` (Windows path: `G:\My Drive\URecorder`). Mount with: `sshfs {{WINDOWS_USER}}@{{WORKSTATION_IP}}:"G:/My Drive/URecorder" ~/urecorder -o allow_other,reconnect,_netdev`
+- **URecorder via SSHFS**: Mounted at `~/urecorder/` (Windows path: `G:\My Drive\URecorder`). Mount with: `{{REMOTE_MOUNT_TOOL}} {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"G:/My Drive/URecorder" ~/urecorder -o allow_other,reconnect,_netdev`
 - **GDrive via rclone**: `gdrive:` remote has `scope = drive.file` (limited access). `drive:` token expired 2026-03. Re-auth required for full GDrive access.
 
 ## Audio File Drop Watcher

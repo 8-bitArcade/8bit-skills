@@ -3,7 +3,7 @@
 ## Prerequisites Checklist
 - [ ] SSH server running on remote machine
 - [ ] Key-based auth configured (VPS public key in remote's `authorized_keys`)
-- [ ] `sshfs` installed on agent host
+- [ ] `{{REMOTE_MOUNT_TOOL}}` installed on agent host
 - [ ] `/etc/fuse.conf` has `user_allow_other` uncommented
 
 ## Windows-Specific Notes
@@ -18,9 +18,9 @@
 3. **"Permission denied"** → check SSH key is in remote's `authorized_keys`
 4. **Mount fails silently** → check SSH connectivity first with `ssh user@ip "whoami"`
 
-## Russell's Setup (Specific)
-- Remote: Windows PC at `{{WORKSTATION_IP}}`
+## {{USER}}'s Setup (Specific)
+- Remote: {{DESKTOP_HOST}} at `{{INFERENCE_HOST_IP}}`
 - User: `123`
-- Vault: `{{WINDOWS_DOCS}}/AI_Vault/Admin`
+- Vault: `{{WINDOWS_USER_DOCS}}/AI_Vault/Admin`
 - Mount: `~/.obsidian_vault/`
 - Mount script: `scripts/mount-obsidian-vault.sh`

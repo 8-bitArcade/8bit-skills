@@ -11,7 +11,7 @@ from datetime import datetime
 
 VAULT_PATH = os.path.expanduser("~/.obsidian_vault/Efforts/Transcript")
 REMOTE_USER = "123"
-REMOTE_HOST = "{{WORKSTATION_IP}}"
+REMOTE_HOST = "{{INFERENCE_HOST_IP}}"
 REMOTE_DIR = "{{WINDOWS_TEMP}}/whisper_work"
 GPU_MODEL = "{{WHISPER_MODEL}}"
 CPU_MODEL = "tiny"  # VPS only has 7.8GB RAM

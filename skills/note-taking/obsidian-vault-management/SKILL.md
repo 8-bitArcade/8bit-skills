@@ -25,25 +25,25 @@ This skill handles all interactions with Obsidian vaults when no native plugin e
 
 ## Core Workflows
 
-### 1. SSHFS Mount (Primary — Vault on Windows PC, Agent on VPS)
-**When**: Vault lives on user's Windows PC (`{{WORKSTATION_IP}}`), agent runs on VPS. This is the recommended approach for cross-machine vault access.
+### 1. SSHFS Mount (Primary — Vault on {{DESKTOP_HOST}}, Agent on VPS)
+**When**: Vault lives on user's {{DESKTOP_HOST}} (`{{INFERENCE_HOST_IP}}`), agent runs on VPS. This is the recommended approach for cross-machine vault access.
 
 **Prerequisites**:
-- SSH server running on Windows PC (Settings → Optional Features → OpenSSH Server)
+- SSH server running on {{DESKTOP_HOST}} (Settings → Optional Features → OpenSSH Server)
 - VPS public key added to Windows `authorized_keys`
 - `/etc/fuse.conf` on VPS has `user_allow_other` uncommented
-- `sshfs` installed on VPS (`apt install sshfs`)
+- `{{REMOTE_MOUNT_TOOL}}` installed on VPS (`apt install {{REMOTE_MOUNT_TOOL}}`)
 
 **Steps**:
 ```bash
-# 1. Add VPS public key to Windows PC (run in PowerShell as Administrator)
+# 1. Add VPS public key to {{DESKTOP_HOST}} (run in PowerShell as Administrator)
 $key = "ssh-ed25519 AAAA... (VPS pub key)"
 Set-Content -Path "$env:USERPROFILE\.ssh\authorized_keys" -Value $key -Force
 icacls "$env:USERPROFILE\.ssh\authorized_keys" /grant "USERNAME:(R,W)"
 
 # 2. Mount vault on VPS
 mkdir -p ~/.obsidian_vault
-sshfs {{WINDOWS_USER}}@{{WORKSTATION_IP}}:"{{WINDOWS_DOCS}}/AI_Vault/Admin" ~/.obsidian_vault -o allow_other,reconnect,_netdev
+{{REMOTE_MOUNT_TOOL}} {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"{{WINDOWS_USER_DOCS}}/AI_Vault/Admin" ~/.obsidian_vault -o allow_other,reconnect,_netdev
 
 # 3. Verify access
 ls -la ~/.obsidian_vault/
@@ -53,10 +53,10 @@ ls -la ~/.obsidian_vault/
 
 **Pitfalls**:
 - ⚠️ Windows `authorized_keys` permissions: file created as admin but user can't read → must run `icacls` fix in admin PowerShell.
-- ⚠️ `/etc/fuse.conf` must have `user_allow_other` uncommented, or `sshfs -o allow_other` fails.
+- ⚠️ `/etc/fuse.conf` must have `user_allow_other` uncommented, or `{{REMOTE_MOUNT_TOOL}} -o allow_other` fails.
 - ⚠️ SSHFS path format: use forward slashes (`C:/Users/...`) and quote the path.
 - ⚠️ No sudo on VPS → cannot add to `/etc/fstab`. Use mount script instead.
-- ⚠️ Vault path on Windows: user's username is `123`, vault at `{{WINDOWS_DOCS}}\AI_Vault\Admin`.
+- ⚠️ Vault path on Windows: user's username is `123`, vault at `{{WINDOWS_USER_DOCS}}\AI_Vault\Admin`.
 
 ### 2. Local File Access (SSH Machine)
 **When**: Vault lives directly on the VPS SSH host.
@@ -85,7 +85,7 @@ curl -s https://your-vault.vercel.app/NoteName.md
 - ⚠️ CORS may block direct fetches; use proxy or publish to external host.
 
 ### 3. Cross-Vault Migration (Same Machine)
-**When**: Moving files between two Obsidian vaults on the same Windows PC (e.g., Admin vault → Ash vault).
+**When**: Moving files between two Obsidian vaults on the same {{DESKTOP_HOST}} (e.g., Admin vault → Ash vault).
 
 **Steps**:
 ```powershell
@@ -97,7 +97,7 @@ Copy-Item 'C:/Source/Vault/file.md' 'C:/Target/Vault/Subfolder/' -Force
 ```
 Or from VPS (files already on VPS via SSHFS mount):
 ```bash
-scp ~/.obsidian_vault/source/file.md {{WINDOWS_USER}}@{{WORKSTATION_IP}}:"C:/Target/Vault/Subfolder/"
+scp ~/.obsidian_vault/source/file.md {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"C:/Target/Vault/Subfolder/"
 ```
 
 **Vault structure** (Admin vault — four folders only):
@@ -177,7 +177,7 @@ Then use `native-mcp` skill to connect.
 
 ## References
 
-- **SSHFS Setup Guide**: See `references/sshfs-setup.md` for cross-platform mount details
+- **SSHFS Setup Guide**: See `references/{{REMOTE_MOUNT_TOOL}}-setup.md` for cross-platform mount details
 - **Mount Script**: See `scripts/mount-obsidian-vault.sh` for reusable auto-mount
 - **Vault Location Discovery**: Probe with `ssh user@ip "powershell -Command \"Test-Path 'C:/Path'\""` on Windows
 
@@ -191,20 +191,20 @@ Then use `native-mcp` skill to connect.
 
 ## User Environment
 
-- **Windows PC (vault host):** `{{WORKSTATION_IP}}` — also runs {{LMS}}
-- **VPS (agent host):** `{{VPS_IP}}` (user: russell, Ubuntu)
+- **{{DESKTOP_HOST}} (vault host):** `{{INFERENCE_HOST_IP}}` — also runs {{LMS}}
+- **VPS (agent host):** `{{AGENT_HOST_IP}}` (user: {{USER}}, Ubuntu)
 - **Vault path on Windows:** TBD — needs confirmation from user
-- SSH server already running on Windows PC
+- SSH server already running on {{DESKTOP_HOST}}
 - Hermes `hermes mcp` CLI available on VPS for adding MCP servers
 
 ## Recommended Architecture
 
-**MCP server on Windows PC + SSH tunnel from VPS** — this is the preferred route for this user's setup. The MCP server handles vault I/O locally where the vault lives, SSH tunnel encrypts the connection, no file lock conflicts.
+**MCP server on {{DESKTOP_HOST}} + SSH tunnel from VPS** — this is the preferred route for this user's setup. The MCP server handles vault I/O locally where the vault lives, SSH tunnel encrypts the connection, no file lock conflicts.
 
-### SSH Tunnel Setup (VPS → Windows PC)
+### SSH Tunnel Setup (VPS → {{DESKTOP_HOST}})
 ```bash
-# From VPS, forward local port 3000 to Windows PC's MCP server
-ssh -L {{PORT}}:localhost:{{PORT}} {{USER}}@{{WORKSTATION_IP}} -N -f
+# From VPS, forward local port 3000 to {{DESKTOP_HOST}}'s MCP server
+ssh -L {{TUNNEL_PORT}}:localhost:{{TUNNEL_PORT}} {{USER}}@{{INFERENCE_HOST_IP}} -N -f
 ```
 
 ### Register MCP Server with Hermes
@@ -213,9 +213,9 @@ ssh -L {{PORT}}:localhost:{{PORT}} {{USER}}@{{WORKSTATION_IP}} -N -f
 hermes mcp add obsidian --url http://localhost:3000
 ```
 
-### Windows PC: Install MCP Server
+### {{DESKTOP_HOST}}: Install MCP Server
 ```powershell
-# In PowerShell on Windows PC:
+# In PowerShell on {{DESKTOP_HOST}}:
 npm install -g @davidgerard/obsidian-mcp
 # Or use the Python variant:
 pip install obsidian-mcp-server
@@ -225,7 +225,7 @@ pip install obsidian-mcp-server
 ### Alternative: SSHFS Mount (if MCP proves problematic)
 ```bash
 # On VPS:
-sshfs {{USER}}@{{WORKSTATION_IP}}:/path/to/vault /mnt/obsidian
+{{REMOTE_MOUNT_TOOL}} {{USER}}@{{INFERENCE_HOST_IP}}:/path/to/vault /mnt/obsidian
 # Then use read_file/search_files directly on /mnt/obsidian/
 ```
 

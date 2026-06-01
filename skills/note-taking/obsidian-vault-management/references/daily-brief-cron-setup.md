@@ -1,7 +1,7 @@
 # Daily Brief Cron Job Setup
 
 ## Cron Configuration
-- Job ID: `{{CRON_ID_5}}`
+- Job ID: `{{CRON_ID_DAILY_BRIEF}}`
 - Schedule: `0 8 * * *` (8:00 AM CEST daily)
 - Delivery: `origin,telegram:530910105` (both chat + Telegram)
 - Toolsets: `session_search`, `todo`, `terminal`, `file`

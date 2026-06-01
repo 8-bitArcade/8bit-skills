@@ -2,7 +2,7 @@
 name: hermes-lmstudio-catalog
 description: "Configure {{LMS}} model catalog in Hermes — add custom models to slash command dropdown."
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 

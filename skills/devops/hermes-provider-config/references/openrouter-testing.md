@@ -8,7 +8,7 @@ Test if OpenRouter API key works and model is accessible:
 import json, urllib.request, subprocess
 
 key = subprocess.check_output(
-    ['grep', '-o', 'sk-or-[^ ]*', '{{CONFIG_PATH}}'],
+    ['grep', '-o', 'sk-or-[^ ]*', '{{HERMES_CONFIG_PATH}}'],
     text=True
 ).splitlines()[0]
 

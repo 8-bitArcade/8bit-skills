@@ -20,16 +20,16 @@ import urllib.request
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, timezone
 
-WORKSTATION_HOST = "{{WORKSTATION_IP}}"
+WORKSTATION_HOST = "{{INFERENCE_HOST_IP}}"
 LMSTUDIO_PORT = 1235
 HEALTH_PORT = 9191
 
 
-def check_{{VPN_CMD}}():
-    """Check workstation availability via {{VPN_TOOL}}."""
+def check_tailscale():
+    """Check workstation availability via {{MESH_VPN}}."""
     try:
         result = subprocess.run(
-            ["{{VPN_CMD}}", "status", "--json"],
+            ["{{MESH_VPN_CMD}}", "status", "--json"],
             capture_output=True, text=True, timeout=10,
         )
         if result.returncode == 0:
@@ -43,7 +43,7 @@ def check_{{VPN_CMD}}():
                         "online": peer.get("Online", False),
                         "last_seen": peer.get("LastSeen", "unknown"),
                     }
-        return {"ok": False, "error": "workstation not found in {{VPN_TOOL}} peers"}
+        return {"ok": False, "error": "workstation not found in {{MESH_VPN}} peers"}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
@@ -97,7 +97,7 @@ def get_vps_stats():
 
 def build_health_response():
     """Build the full health response."""
-    ts = check_{{VPN_CMD}}()
+    ts = check_tailscale()
     ts_ok = ts.get("ok", False)
 
     lm = {"ok": False, "error": "workstation offline"}
@@ -111,7 +111,7 @@ def build_health_response():
         "workstation": {
             "host": WORKSTATION_HOST,
             "available": ts_ok and lm.get("ok", False),
-            "{{VPN_CMD}}": ts,
+            "{{MESH_VPN_CMD}}": ts,
             "lmstudio": lm,
         },
         "vps": vps,

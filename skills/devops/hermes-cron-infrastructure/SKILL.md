@@ -2,7 +2,7 @@
 name: hermes-cron-infrastructure
 description: "Maintain, debug, and create Hermes cron jobs and their supporting scripts — including SSHFS timeout handling and health monitoring."
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 

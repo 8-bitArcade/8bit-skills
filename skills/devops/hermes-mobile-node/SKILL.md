@@ -2,7 +2,7 @@
 name: hermes-mobile-node
 description: "Design and deploy a mobile AI inference node (phone) that acts as failover for a VPS+workstation setup. Covers health endpoints, cron relay routing, model management, and Termux deployment."
 version: 1.0.0
-author: Russell
+author: {{USER}}
 license: MIT
 ---
 
@@ -67,9 +67,9 @@ To restart: kill then re-launch.
 
 ## Health Endpoint Design
 
-The health endpoint runs on the **VPS** (not the workstation). It polls the workstation via {{VPN_TOOL}} status and `curl` to {{LMS}}. Returns two views:
+The health endpoint runs on the **VPS** (not the workstation). It polls the workstation via {{MESH_VPN}} status and `curl` to {{LMS}}. Returns two views:
 
-- `/health` — full diagnostics (workstation {{VPN_CMD}} + {{LMS}} + VPS disk/memory/load)
+- `/health` — full diagnostics (workstation {{MESH_VPN_CMD}} + {{LMS}} + VPS disk/memory/load)
 - `/mobile` — minimal decision for phone: `{"run_local": true/false, "workstation_online": false, "timestamp": "..."}`
 
 Phone should call `/mobile` (not `/health`) to minimize data usage.
@@ -78,11 +78,11 @@ Phone should call `/mobile` (not `/health`) to minimize data usage.
 
 1. Check workstation health via `http://localhost:9191/mobile`
 2. **Tier 1:** Workstation online → run job normally on VPS
-3. **Tier 2:** Workstation offline → look up phone in {{VPN_TOOL}} (`{{VPN_CMD}} status --json`, match hostname containing "nubia"/"z70" or OS == "android")
+3. **Tier 2:** Workstation offline → look up phone in {{MESH_VPN}} (`{{MESH_VPN_CMD}} status --json`, match hostname containing "nubia"/"z70" or OS == "android")
    - Phone found → forward job to phone via `http://<tailscale_ip>:9192/cron/trigger` (2000-char context limit)
    - Phone fails → log and fall through to tier 3
 4. **Tier 3:** Both local + mobile unreachable → call OpenRouter API (`https://openrouter.ai/api/v1/chat/completions`, model `openrouter/auto`)
-   - Reads API key from `~/.hermes/config.yaml` if `{{OR_API_KEY_VAR}}` env var is not set
+   - Reads API key from `~/.hermes/config.yaml` if `{{OR_API_KEY}}` env var is not set
    - Includes system prompt noting no Hermes tool access (files, session_search unavailable)
 5. **All tiers failed** → log failure, job is dropped and retried on next cron cycle
 
@@ -108,17 +108,17 @@ The phone needs a model manager because RAM is finite (24GB shared with OS). Loa
 - **SSH backgrounding blocked** — use `screen`, never `&`, `nohup`, `setsid`, or `daemon=true`. `terminal(background=True)` also fails for blocking servers. Confirmed: `serve_forever()` processes die silently.
 - **Termux battery optimization** — Android kills background processes. Whitelist Termux in battery settings before deploying.
 - **AIOS (Nubia ROM) may restrict Termux** — test `termux-setup-storage` and process persistence early
-- **{{VPN_TOOL}} IP changes** — mobile uses DHCP within {{VPN_TOOL}} network. Cron relay resolves IP dynamically from `{{VPN_CMD}} status --json`, never hardcode
-- **Workstation offline ≠ sleep** — if workstation is truly off {{VPN_TOOL}} (not just asleep), last_seen timestamp will be hours old. Use {{VPN_TOOL}} `online` field, not just `last_seen`
+- **{{MESH_VPN}} IP changes** — mobile uses DHCP within {{MESH_VPN}} network. Cron relay resolves IP dynamically from `{{MESH_VPN_CMD}} status --json`, never hardcode
+- **Workstation offline ≠ sleep** — if workstation is truly off {{MESH_VPN}} (not just asleep), last_seen timestamp will be hours old. Use {{MESH_VPN}} `online` field, not just `last_seen`
 - **Model GGUFs are large** — download over WiFi, not mobile data. Use a download script that validates SHA256.
-- **OpenRouter key not in VPS env** — Hermes config has the key but standalone Python scripts can't see Hermes env. The `cron_relay.py` script reads the key from `~/.hermes/config.yaml` directly. Don't rely on `{{OR_API_KEY_VAR}}` env var on the VPS.
+- **OpenRouter key not in VPS env** — Hermes config has the key but standalone Python scripts can't see Hermes env. The `cron_relay.py` script reads the key from `~/.hermes/config.yaml` directly. Don't rely on `{{OR_API_KEY}}` env var on the VPS.
 
 ## Verification
 
 1. Health endpoint: `curl -s http://localhost:9191/mobile | python3 -m json.tool`
 2. Cron relay: `python3 ~/.hermes/scripts/cron_relay.py --check`
 3. Screen sessions: `screen -ls` should show `hermes-health`
-4. After phone joins {{VPN_TOOL}}: `{{VPN_CMD}} status --json` shows phone hostname/IP
+4. After phone joins {{MESH_VPN}}: `{{MESH_VPN_CMD}} status --json` shows phone hostname/IP
 
 ## Reference Files
 

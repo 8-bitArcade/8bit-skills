@@ -1,17 +1,17 @@
-# Russell's Obsidian Vault Setup
+# {{USER}}'s Obsidian Vault Setup
 
 ## Configuration
-- **Vault location**: `{{WINDOWS_DOCS}}\AI_Vault\Admin` (Windows PC)
-- **Remote host**: `{{WORKSTATION_IP}}` (Windows PC, same as {{LMS}})
+- **Vault location**: `{{WINDOWS_USER_DOCS}}\AI_Vault\Admin` ({{DESKTOP_HOST}})
+- **Remote host**: `{{INFERENCE_HOST_IP}}` ({{DESKTOP_HOST}}, same as {{LMS}})
 - **Remote user**: `123`
 - **Mount point on VPS**: `~/.obsidian_vault`
 - **SSH key**: `~/.ssh/id_ed25519` (VPS) → added to Windows `~/.ssh/authorized_keys`
 
 ## Setup Steps Completed
-1. Added VPS public key to Windows PC `authorized_keys` (ran as admin)
-2. Verified SSH connectivity: `ssh {{WINDOWS_USER}}@{{WORKSTATION_IP}} "whoami"` → `gaming-ai-3090r\123`
+1. Added VPS public key to {{DESKTOP_HOST}} `authorized_keys` (ran as admin)
+2. Verified SSH connectivity: `ssh {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}} "whoami"` → `gaming-ai-3090r\123`
 3. Enabled `user_allow_other` in `/etc/fuse.conf` on VPS
-4. Mounted vault: `sshfs {{WINDOWS_USER}}@{{WORKSTATION_IP}}:"{{WINDOWS_DOCS}}/AI_Vault/Admin" ~/.obsidian_vault -o allow_other,reconnect`
+4. Mounted vault: `{{REMOTE_MOUNT_TOOL}} {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}:"{{WINDOWS_USER_DOCS}}/AI_Vault/Admin" ~/.obsidian_vault -o allow_other,reconnect`
 5. Verified read/write: created and deleted test note
 
 ## Known Vault Contents (as of 2026-05-27)

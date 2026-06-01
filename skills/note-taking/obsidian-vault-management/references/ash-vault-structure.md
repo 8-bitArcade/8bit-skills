@@ -1,6 +1,6 @@
 # Ash Vault Structure
 
-**Path**: `{{WINDOWS_DOCS}}/Obsidian/Ash/Russell`
+**Path**: `{{WINDOWS_USER_DOCS}}/Obsidian/Ash/Russell`
 
 ## Folder Map
 - `00 Inbox/` — landing zone for quick captures

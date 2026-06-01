@@ -211,7 +211,7 @@ function authenticateToken(req, res, next) {
 
 ```javascript
 // config.js
-authorizedEmails: (process.env.{{AUTH_EMAILS_VAR}} || 'admin@example.com').split(',')
+authorizedEmails: (process.env.{{AUTH_EMAILS_KEY}} || 'admin@example.com').split(',')
 
 // Check before registration
 function isAuthenticatedEmail(email) {

@@ -26,7 +26,7 @@
 
 ## SSH Command Pattern (Working)
 ```bash
-ssh {{WINDOWS_USER}}@{{WORKSTATION_IP}} 'cd {{WINDOWS_TEMP}}/whisper_work && python run_whisper.py {{WHISPER_MODEL}} "{{WINDOWS_TEMP}}/whisper_work/file.m4a" "{{WINDOWS_TEMP}}/whisper_work/file.json"'
+ssh {{WINDOWS_USER}}@{{INFERENCE_HOST_IP}} 'cd {{WINDOWS_TEMP}}/whisper_work && python run_whisper.py {{WHISPER_MODEL}} "{{WINDOWS_TEMP}}/whisper_work/file.m4a" "{{WINDOWS_TEMP}}/whisper_work/file.json"'
 ```
 - Single quotes around entire PowerShell command
 - `&&` to chain (not `;`)
@@ -34,8 +34,8 @@ ssh {{WINDOWS_USER}}@{{WORKSTATION_IP}} 'cd {{WINDOWS_TEMP}}/whisper_work && pyt
 - Forward slashes throughout
 
 ## Remote Environment
-- **Host**: `{{WINDOWS_USER}}@{{WORKSTATION_IP}}`
+- **Host**: `{{WINDOWS_USER}}@{{INFERENCE_HOST_IP}}`
 - **Work dir**: `{{WINDOWS_TEMP}}/whisper_work/`
 - **Python**: `C:\Program Files\Python313\python.exe`
-- **Model cache**: `{{WINDOWS_HOME}}\.cache\whisper\{{WHISPER_MODEL}}.pt` (~1.5GB)
+- **Model cache**: `{{WINDOWS_USER_HOME}}\.cache\whisper\{{WHISPER_MODEL}}.pt` (~1.5GB)
 - **GPU**: NVIDIA GeForce {{GPU_MODEL}} (CUDA available)

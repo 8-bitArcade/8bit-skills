@@ -8,7 +8,7 @@ from requests_oauthlib import OAuth1
 
 def load_env():
     env = {}
-    with open('{{ENV_PATH}}') as f:
+    with open('{{HERMES_ENV_PATH}}') as f:
         for line in f:
             line = line.strip()
             if '=' in line and not line.startswith('#'):
@@ -18,7 +18,7 @@ def load_env():
 
 def test_meta(env):
     """Test Meta API connection."""
-    token = env.get('{{META_TOKEN_VAR}}') or env.get('META_FACEBOOK_APP_ID')
+    token = env.get('{{META_TOKEN_KEY}}') or env.get('META_FACEBOOK_APP_ID')
     if not token:
         print("❌ Meta: No token found")
         return False
@@ -39,10 +39,10 @@ def test_meta(env):
 
 def test_x(env):
     """Test X/Twitter API connection."""
-    key = env.get('{{TW_API_KEY_VAR}}')
-    secret = env.get('{{TW_API_SECRET_VAR}}')
-    token = env.get('{{TW_ACCESS_TOKEN_VAR}}')
-    token_secret = env.get('{{TW_ACCESS_SECRET_VAR}}')
+    key = env.get('{{TW_API_KEY}}')
+    secret = env.get('{{TW_API_SECRET}}')
+    token = env.get('{{TW_ACCESS_TOKEN}}')
+    token_secret = env.get('{{TW_ACCESS_SECRET}}')
     
     if not all([key, secret, token, token_secret]):
         print("❌ X: Missing credentials")

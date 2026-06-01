@@ -1,11 +1,11 @@
 #!/bin/bash
-# Mount Obsidian vault from Windows PC via SSHFS
+# Mount Obsidian vault from {{DESKTOP_HOST}} via SSHFS
 # Usage: bash mount-obsidian-vault.sh
 
 MOUNT_POINT="$HOME/.obsidian_vault"
-VAULT_PATH="{{WINDOWS_DOCS}}/AI_Vault/Admin"
+VAULT_PATH="{{WINDOWS_USER_DOCS}}/AI_Vault/Admin"
 REMOTE_USER="123"
-REMOTE_HOST="{{WORKSTATION_IP}}"
+REMOTE_HOST="{{INFERENCE_HOST_IP}}"
 
 mkdir -p "$MOUNT_POINT"
 
@@ -16,7 +16,7 @@ if mountpoint -q "$MOUNT_POINT" 2>/dev/null; then
 fi
 
 # Mount the vault
-sshfs "${REMOTE_USER}@${REMOTE_HOST}":"$VAULT_PATH" "$MOUNT_POINT" \
+{{REMOTE_MOUNT_TOOL}} "${REMOTE_USER}@${REMOTE_HOST}":"$VAULT_PATH" "$MOUNT_POINT" \
     -o allow_other,reconnect,_netdev
 
 if [ $? -eq 0 ]; then
