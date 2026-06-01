@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # sync-skills-repo.sh — Sync user-created skills to 8Bit-Skills-Library repo
-# Called by backup-hermes.sh after each backup run
-# Only syncs skills NOT in .bundled_manifest (user-created only)
+# Sanitizes all skills before committing (strips private data, replaces with {{TEMPLATES}})
 
 set -euo pipefail
 
 SKILLS_SRC="$HOME/.hermes/skills"
 REPO_DIR="$HOME/8Bit-Skills-Library"
 MANIFEST="$SKILLS_SRC/.bundled_manifest"
+STAGING="$REPO_DIR/.staging"
 
 if [ ! -d "$REPO_DIR/.git" ]; then
   echo "ERROR: $REPO_DIR is not a git repo. Run setup first."
@@ -23,81 +23,73 @@ if [ -f "$MANIFEST" ]; then
   done < "$MANIFEST"
 fi
 
-# Copy each user-created skill (raw copy first, then sanitize)
+# Clean staging
+rm -rf "$STAGING"
+mkdir -p "$STAGING"
+
+# Copy each user-created skill to staging
+# Structure: flat skills go to STAGING/skill_name/, category skills to STAGING/category/skill_name/
 COPIED=0
 SKIPPED=0
 
-for category_dir in "$SKILLS_SRC"/*/; do
-  [ -d "$category_dir" ] || continue
-  category=$(basename "$category_dir")
-  [ "$category" = "." ] || true
+for item in "$SKILLS_SRC"/*/; do
+  [ -d "$item" ] || continue
+  name=$(basename "$item")
 
-  # Check if this top-level dir IS a skill (has SKILL.md directly)
-  if [ -f "$category_dir/SKILL.md" ]; then
-    skill_name="$category"
-    if [ "${BUNDLED[$skill_name]+isset}" ]; then
-      SKIPPED=$((SKIPPED + 1))
-    else
-      dest="$REPO_DIR/skills/$category"
-      mkdir -p "$dest"
-      rsync -a --delete \
-        --exclude='__pycache__' \
-        --exclude='*.pyc' \
-        --exclude='.DS_Store' \
-        "$category_dir/" "$dest/"
-      COPIED=$((COPIED + 1))
-    fi
-    continue
-  fi
-
-  # Otherwise it's a category folder with sub-skills
-  for skill_dir in "$category_dir"/*/; do
-    [ -d "$skill_dir" ] || continue
-    skill_name=$(basename "$skill_dir")
-    [ -f "$skill_dir/SKILL.md" ] || continue
-
-    if [ "${BUNDLED[$skill_name]+isset}" ]; then
+  if [ -f "$item/SKILL.md" ]; then
+    # Flat/top-level skill (e.g. automated-reporting/, pitch-deck-creation/)
+    if [ "${BUNDLED[$name]+isset}" ]; then
       SKIPPED=$((SKIPPED + 1))
       continue
     fi
-
-    dest="$REPO_DIR/skills/$category/$skill_name"
-    mkdir -p "$dest"
-    rsync -a --delete \
-      --exclude='__pycache__' \
-      --exclude='*.pyc' \
-      --exclude='.DS_Store' \
-      "$skill_dir/" "$dest/"
-
+    rsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \
+      "$item/" "$STAGING/$name/"
     COPIED=$((COPIED + 1))
-  done
-done
+  else
+    # Category directory (e.g. devops/, note-taking/) — contains sub-skills
+    for skill_item in "$item"/*/; do
+      [ -d "$skill_item" ] || continue
+      skill_name=$(basename "$skill_item")
+      [ -f "$skill_item/SKILL.md" ] || continue
 
-# Sanitize all copied skills — strip private data, replace with {{TEMPLATES}}
-echo "Sanitizing copied skills..."
-SANITIZE_OUTPUT=$(python3 "$REPO_DIR/sanitize.py" "$REPO_DIR/skills" "$REPO_DIR/skills" 2>&1)
-echo "$SANITIZE_OUTPUT"
+      if [ "${BUNDLED[$skill_name]+isset}" ]; then
+        SKIPPED=$((SKIPPED + 1))
+        continue
+      fi
 
-# Collect skill list for README (handles both flat and category skills)
-SKILL_LIST=""
-
-# Flat skills (directly under skills/)
-for skill_dir in "$REPO_DIR/skills"/*/; do
-  [ -d "$skill_dir" ] || continue
-  name=$(basename "$skill_dir")
-  if [ -f "$skill_dir/SKILL.md" ]; then
-    desc=$(grep -m1 "^description:" "$skill_dir/SKILL.md" | sed 's/description: *//;s/^"//;s/"$//' || echo "")
-    SKILL_LIST="${SKILL_LIST}- **${name}** — ${desc}"$'\n'
+      mkdir -p "$STAGING/$name/$skill_name"
+      rsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \
+        "$skill_item/" "$STAGING/$name/$skill_name/"
+      COPIED=$((COPIED + 1))
+    done
   fi
 done
 
-# Category-based skills (skills/category/skill/)
+# Sanitize: strip private data from staging, write sanitized to repo skills/
+echo "Sanitizing ${COPIED} skills..."
+SANITIZE_OUTPUT=$(python3 "$REPO_DIR/sanitize.py" "$STAGING" "$REPO_DIR/skills" 2>&1)
+echo "$SANITIZE_OUTPUT"
+
+# Clean staging
+rm -rf "$STAGING"
+
+# Collect skill list for README
+SKILL_LIST=""
+
+for skill_dir in "$REPO_DIR/skills"/*/; do
+  [ -d "$skill_dir" ] || continue
+  name=$(basename "$skill_dir")
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  desc=$(grep -m1 "^description:" "$skill_dir/SKILL.md" 2>/dev/null | sed 's/description: *//;s/^"//;s/"$//' || echo "")
+  SKILL_LIST="${SKILL_LIST}- **${name}** — ${desc}"$'\n'
+done
+
 for skill_dir in "$REPO_DIR/skills"/*/*/; do
   [ -d "$skill_dir" ] || continue
   category=$(basename "$(dirname "$skill_dir")")
   name=$(basename "$skill_dir")
   [ -f "$skill_dir/SKILL.md" ] || continue
-  desc=$(grep -m1 "^description:" "$skill_dir/SKILL.md" | sed 's/description: *//;s/^"//;s/"$//' || echo "")
+  desc=$(grep -m1 "^description:" "$skill_dir/SKILL.md" 2>/dev/null | sed 's/description: *//;s/^"//;s/"$//' || echo "")
   SKILL_LIST="${SKILL_LIST}- **${category}/${name}** — ${desc}"$'\n'
 done
 
@@ -108,23 +100,46 @@ import sys
 path, timestamp, skill_list = sys.argv[1], sys.argv[2], sys.argv[3]
 readme = f"""# 8Bit Skills Library
 
-Production-ready agent skills for the [8Bit AI](https://8bit-ai.com) platform.
+Production-ready agent skills for AI agent platforms (Hermes, OpenClaw, etc.).
 
-Each skill is self-contained — drop it into your `~/.hermes/skills/` directory and customize.
+Each skill is self-contained — copy it into your skills directory and customize
+the `{{{{VARIABLE}}}}` template values for your setup.
 
 ## Available Skills
 
 {skill_list}
-## Usage
+## Quick Start
 
 1. Browse the `skills/` directory
 2. Copy any skill folder into your `~/.hermes/skills/` directory
-3. Customize the SKILL.md and supporting files for your setup
-4. Skills auto-load when relevant triggers are detected
+3. Search for `{{{{` in the skill files to find template variables
+4. Replace each `{{{{VARIABLE}}}}` with your actual value
+5. Skills auto-load when relevant triggers are detected
+
+## Template Variables
+
+Skills use `{{{{VARIABLE}}}}` placeholders for instance-specific values:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{{{{WORKSTATION_IP}}}}` | Your workstation/local AI server IP | `192.168.1.100` |
+| `{{{{VPS_IP}}}}` | Your VPS/server IP | `203.0.113.50` |
+| `{{{{LMS_HOST}}}}` | LLM server host:port | `192.168.1.100:1234` |
+| `{{{{LMS}}}}` | LLM server name | LM Studio |
+| `{{{{MODEL}}}}` / `{{{{MODEL_LARGE}}}}` | Primary model name | `qwen/qwen3.6-27b` |
+| `{{{{VAULT_MOUNT}}}}` | Obsidian vault mount path | `~/.obsidian_vault` |
+| `{{{{HERMES_HOME}}}}` | Hermes agent home | `~/.hermes` |
+| `{{{{ENV_PATH}}}}` | Environment file path | `~/.hermes/.env` |
+| `{{{{USER}}}}` | Server username | `russell` |
+| `{{{{WINDOWS_USER}}}}` | Windows machine username | `youruser` |
+| `{{{{GPU_MODEL}}}}` | GPU model for inference | RTX 3090 |
+| `{{{{DOMAIN}}}}` | Your domain | `example.com` |
+| `{{{{GITHUB_USER}}}}` | GitHub username | `yourname` |
+
+Each skill's SKILL.md lists the specific variables it uses.
 
 ## Contributing
 
-Skills are synced automatically from production agent workflows.
 To propose a new skill, open a PR with the skill directory.
 
 ---
