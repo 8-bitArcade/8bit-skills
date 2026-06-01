@@ -30,7 +30,28 @@ SKIPPED=0
 for category_dir in "$SKILLS_SRC"/*/; do
   [ -d "$category_dir" ] || continue
   category=$(basename "$category_dir")
+  [ "$category" = "." ] || true
 
+  # Check if this top-level dir IS a skill (has SKILL.md directly)
+  if [ -f "$category_dir/SKILL.md" ]; then
+    # Top-level skill like automated-reporting/, pitch-deck-creation/
+    skill_name="$category"
+    if [ "${BUNDLED[$skill_name]+isset}" ]; then
+      SKIPPED=$((SKIPPED + 1))
+    else
+      dest="$REPO_DIR/skills/$category"
+      mkdir -p "$dest"
+      rsync -a --delete \
+        --exclude='__pycache__' \
+        --exclude='*.pyc' \
+        --exclude='.DS_Store' \
+        "$category_dir/" "$dest/"
+      COPIED=$((COPIED + 1))
+    fi
+    continue
+  fi
+
+  # Otherwise it's a category folder with sub-skills
   for skill_dir in "$category_dir"/*/; do
     [ -d "$skill_dir" ] || continue
     skill_name=$(basename "$skill_dir")
@@ -53,12 +74,25 @@ for category_dir in "$SKILLS_SRC"/*/; do
   done
 done
 
-# Collect skill list for README
+# Collect skill list for README (handles both flat and category skills)
 SKILL_LIST=""
-for skill_dir in "$REPO_DIR/skills"/*/*; do
+
+# Flat skills (directly under skills/)
+for skill_dir in "$REPO_DIR/skills"/*/; do
+  [ -d "$skill_dir" ] || continue
+  name=$(basename "$skill_dir")
+  if [ -f "$skill_dir/SKILL.md" ]; then
+    desc=$(grep -m1 "^description:" "$skill_dir/SKILL.md" | sed 's/description: *//;s/^"//;s/"$//' || echo "")
+    SKILL_LIST="${SKILL_LIST}- **${name}** — ${desc}"$'\n'
+  fi
+done
+
+# Category-based skills (skills/category/skill/)
+for skill_dir in "$REPO_DIR/skills"/*/*/; do
   [ -d "$skill_dir" ] || continue
   category=$(basename "$(dirname "$skill_dir")")
   name=$(basename "$skill_dir")
+  [ -f "$skill_dir/SKILL.md" ] || continue
   desc=$(grep -m1 "^description:" "$skill_dir/SKILL.md" | sed 's/description: *//;s/^"//;s/"$//' || echo "")
   SKILL_LIST="${SKILL_LIST}- **${category}/${name}** — ${desc}"$'\n'
 done
