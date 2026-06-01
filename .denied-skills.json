@@ -1,0 +1,13 @@
+{
+  "denied": [
+    "skills-library-push",
+    "hermes-lmstudio-catalog",
+    "hermes-mobile-node",
+    "hermes-provider-config",
+    "founder-journal-system",
+    "pitch-deck-creation",
+    "provider-setup-and-fallback",
+    "secure-auth-backend"
+  ],
+  "denied_at": null
+}
