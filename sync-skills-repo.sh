@@ -23,7 +23,7 @@ if [ -f "$MANIFEST" ]; then
   done < "$MANIFEST"
 fi
 
-# Copy each user-created skill
+# Copy each user-created skill (raw copy first, then sanitize)
 COPIED=0
 SKIPPED=0
 
@@ -34,7 +34,6 @@ for category_dir in "$SKILLS_SRC"/*/; do
 
   # Check if this top-level dir IS a skill (has SKILL.md directly)
   if [ -f "$category_dir/SKILL.md" ]; then
-    # Top-level skill like automated-reporting/, pitch-deck-creation/
     skill_name="$category"
     if [ "${BUNDLED[$skill_name]+isset}" ]; then
       SKIPPED=$((SKIPPED + 1))
@@ -73,6 +72,11 @@ for category_dir in "$SKILLS_SRC"/*/; do
     COPIED=$((COPIED + 1))
   done
 done
+
+# Sanitize all copied skills — strip private data, replace with {{TEMPLATES}}
+echo "Sanitizing copied skills..."
+SANITIZE_OUTPUT=$(python3 "$REPO_DIR/sanitize.py" "$REPO_DIR/skills" "$REPO_DIR/skills" 2>&1)
+echo "$SANITIZE_OUTPUT"
 
 # Collect skill list for README (handles both flat and category skills)
 SKILL_LIST=""
@@ -138,7 +142,7 @@ git add -A
 if git diff --cached --quiet; then
   echo "No changes to sync."
 else
-  git commit -m "Sync skills — ${TIMESTAMP} (${COPIED} skills)"
+  git commit -m "Sync skills — ${TIMESTAMP} (${COPIED} skills, sanitized)"
   git push origin main 2>&1
   echo "Synced ${COPIED} skills, skipped ${SKIPPED} bundled."
 fi
