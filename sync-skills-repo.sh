@@ -42,11 +42,29 @@ denied_file = Path('$REPO_DIR/.denied-skills.json')
 if denied_file.exists():
     data = json.load(open(denied_file))
     for name in data.get('denied', []):
-        print(name)
+        if isinstance(name, dict):
+            print(name.get('name', ''))
+        else:
+            print(name)
 " 2>/dev/null || true)
 while IFS= read -r name; do
   [ -n "$name" ] && DENIED["$name"]=1
 done <<< "$DENIED_LIST"
+
+# ── 1c. Load pending skills (not ready for sync either) ──
+declare -A PENDING
+PENDING_LIST=$(python3 -c "
+import json
+from pathlib import Path
+state_file = Path('$REPO_DIR/.approval-state.json')
+if state_file.exists():
+    data = json.load(open(state_file))
+    for entry in data.get('pending', []):
+        print(entry.get('name', ''))
+" 2>/dev/null || true)
+while IFS= read -r name; do
+  [ -n "$name" ] && PENDING["$name"]=1
+done <<< "$PENDING_LIST"
 
 # ── 2. Copy skills to staging ──
 rm -rf "$STAGING"
@@ -69,6 +87,10 @@ for item in "$SKILLS_SRC"/*/; do
       SKIPPED=$((SKIPPED + 1))
       continue
     fi
+    if [ "${PENDING[$name]+isset}" ]; then
+      SKIPPED=$((SKIPPED + 1))
+      continue
+    fi
     rsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='.DS_Store' \
       "$item/" "$STAGING/$name/"
     COPIED=$((COPIED + 1))
@@ -84,6 +106,10 @@ for item in "$SKILLS_SRC"/*/; do
       continue
     fi
     if [ "${DENIED[$skill_name]+isset}" ]; then
+      SKIPPED=$((SKIPPED + 1))
+      continue
+    fi
+    if [ "${PENDING[$skill_name]+isset}" ]; then
       SKIPPED=$((SKIPPED + 1))
       continue
     fi
