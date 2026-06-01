@@ -1,0 +1,16 @@
+# Internal tooling (not for public use)
+sync-skills-repo.sh
+approval_state.py
+sanitize.py
+
+# State files
+.approval-state.json
+.denied-skills.json
+.pending-push
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Staging
+.staging/
