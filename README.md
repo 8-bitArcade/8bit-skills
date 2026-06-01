@@ -13,6 +13,7 @@ Works on: local machine, VPS, cloud VM, or hybrid multi-device.
 - **automated-reporting** — Generate automated reports, briefings, and status updates. Covers daily briefs, cron job reports, and scheduled summaries.
 - **founder-journal-system** — Curated founder narrative intelligence system. Weekly journal generation from Obsidian vault, session logs, and operational data through a multi-stage editorial pipeline with human gates.
 - **pitch-deck-creation** — Create investor-facing pitch decks tailored to specific programs, accelerators, or investor audiences
+- **content-publishing/skills-library-push** — Push approved skills to public {{GITHUB_ORG}}/8bit-skills repo with interactive Telegram button approval via clarify tool
 - **content-publishing/social-media-publishing** — Platform-specific API setup, credential management, and posting workflows for automated content distribution across Instagram, Facebook, X/Twitter, YouTube, and TikTok.
 - **devops/agent-efficiency-audit** — Audit and review the efficiency of the Hermes agent setup — cron jobs, skills, model selection, context usage, and workflows. Run ad-hoc or via cron.
 - **devops/hermes-context-optimization** — Diagnose and reduce Hermes agent context window pressure — config tuning, memory pruning, skill management.
@@ -83,4 +84,4 @@ To contribute: fork this repo, add your skill, and open a PR.
 
 ---
 
-*Auto-synced and sanitized from production. Last updated: 2026-06-01 10:41 UTC*
+*Auto-synced and sanitized from production. Last updated: 2026-06-01 11:36 UTC*
